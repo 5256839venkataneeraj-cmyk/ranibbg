@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C-WAP Studio — Sem 1 C Programming Practice & Live Compiler</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <!-- GSAP 3, ScrollTrigger & Lenis Smooth Scroll -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Inter"', 'system-ui', 'sans-serif'],
+            mono: ['"SF Mono"', '"JetBrains Mono"', 'Menlo', 'Monaco', 'monospace'],
+          },
+          colors: {
+            oled: {
+              950: '#09090B',
+              900: '#111114',
+              850: '#16161A',
+              800: '#1C1C21',
+              700: '#27272E',
+              600: '#383842',
+            },
+            emerald: {
+              500: '#10B981',
+            },
+            crimson: {
+              500: '#EF4444',
+            },
+            amber: {
+              400: '#FBBF24',
+              500: '#F59E0B',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    html, body {
+      background-color: #09090B;
+      color: #F5F5F7;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Lenis Recommended CSS */
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+
+    /* Apple Pro Typography & Tabular Numerals */
+    .display-heading {
+      letter-spacing: -0.038em;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Frosted Apple Glass & Specular Hairlines */
+    .apple-glass {
+      background: rgba(17, 17, 20, 0.72);
+      backdrop-filter: blur(22px) saturate(180%);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .apple-card {
+      background: linear-gradient(180deg, rgba(24, 24, 29, 0.85) 0%, rgba(15, 15, 18, 0.92) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.065);
+      box-shadow:
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+        0 18px 40px -15px rgba(0, 0, 0, 0.65);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.3s ease,
+                  box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .apple-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow:
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
+        0 24px 48px -12px rgba(0, 0, 0, 0.8);
+    }
+
+    .studio-panel {
+      background: #111114;
+      border: 1px solid rgba(255, 255, 255, 0.065);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    }
+
+    /* Warm Ambient Spotlight Glow (Strictly No Purple) */
+    .ambient-spotlight {
+      background:
+        radial-gradient(ellipse 65% 45% at 50% -8%, rgba(245, 158, 11, 0.11), transparent 70%),
+        radial-gradient(ellipse 45% 35% at 82% 12%, rgba(16, 185, 129, 0.06), transparent 65%),
+        radial-gradient(ellipse 50% 40% at 15% 18%, rgba(255, 255, 255, 0.035), transparent 65%);
+    }
+
+    /* Tactile Spring Pill Button */
+    .pill-btn {
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.2s ease,
+                  border-color 0.2s ease,
+                  box-shadow 0.2s ease;
+    }
+    .pill-btn:hover {
+      transform: translateY(-1px);
+    }
+    .pill-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Custom Minimal Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #09090B;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    /* Code editor sync */
+    .editor-textarea {
+      tab-size: 4;
+      -moz-tab-size: 4;
+      caret-color: #F59E0B;
+      line-height: 1.65;
+      font-family: "SF Mono", "JetBrains Mono", Menlo, monospace;
+    }
+    .line-numbers {
+      line-height: 1.65;
+      user-select: none;
+      font-family: "SF Mono", "JetBrains Mono", Menlo, monospace;
+    }
+
+    @keyframes pulseSubtle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+    .animate-pulse-subtle {
+      animation: pulseSubtle 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#09090B] text-[#F5F5F7] selection:bg-amber-500/25 selection:text-white">
+
+  <!-- Top Frosted Apple Glass Navigation Bar -->
+  <header class="sticky top-0 z-40 apple-glass px-4 sm:px-7 py-3">
+    <div class="max-w-[1640px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3.5">
+        <a href="#heroSection" id="brandHomeLink" class="flex items-center gap-3 group">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-b from-[#27272E] to-[#141418] border border-white/15 shadow-inner flex items-center justify-center font-mono font-semibold text-xs text-amber-400 group-hover:border-amber-400/40 transition-colors">
+            C/
+          </div>
+          <div class="flex items-center gap-2.5">
+            <span class="text-sm sm:text-[15px] font-semibold tracking-tight text-[#F5F5F7]">C-WAP Studio</span>
+            <span class="hidden md:inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-white/[0.04] text-[#A1A1AA] border border-white/[0.07]">
+              Sem 1 • Zero Pointers
+            </span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Center Quick Nav Links -->
+      <nav class="hidden lg:flex items-center gap-1 bg-white/[0.03] border border-white/[0.06] rounded-full p-1 text-xs">
+        <button data-scroll-target="#heroSection" class="nav-jump-btn px-3.5 py-1 rounded-full text-[#A1A1AA] hover:text-[#F5F5F7] hover:bg-white/[0.06] transition-all">Overview</button>
+        <button data-scroll-target="#curriculumSection" class="nav-jump-btn px-3.5 py-1 rounded-full text-[#A1A1AA] hover:text-[#F5F5F7] hover:bg-white/[0.06] transition-all">20 WAP Index</button>
+        <button data-scroll-target="#workbenchSection" class="nav-jump-btn px-3.5 py-1 rounded-full text-[#F5F5F7] bg-white/[0.08] font-medium transition-all">GCC Compiler IDE</button>
+      </nav>
+
+      <!-- Right Controls: Progress, Candidate Name, Room, Share, Results -->
+      <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+        <!-- Solved Progress Pill -->
+        <div class="flex items-center gap-2 bg-white/[0.03] border border-white/[0.07] rounded-full px-3 py-1.5 text-xs tabular-nums">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+          <span class="text-[#A1A1AA] hidden sm:inline">Solved</span>
+          <span id="headerSolvedCount" class="font-mono font-semibold text-[#F5F5F7]">0 / 20</span>
+        </div>
+
+        <!-- Candidate Name Input -->
+        <div class="flex items-center bg-white/[0.03] border border-white/[0.07] focus-within:border-amber-400/50 rounded-full px-3 py-1 transition-colors">
+          <span class="text-[11px] text-[#71717A] mr-1.5">Name</span>
+          <input
+            id="studentNameInput"
+            type="text"
+            maxlength="24"
+            placeholder="Your Name"
+            class="bg-transparent text-xs font-medium text-[#F5F5F7] focus:outline-none w-20 sm:w-24"
+          />
+        </div>
+
+        <!-- Room Code Pill -->
+        <div class="hidden sm:flex items-center gap-1.5 bg-white/[0.03] border border-white/[0.07] rounded-full px-3 py-1.5 text-xs">
+          <span class="text-[#71717A]">Room</span>
+          <span id="roomCodeDisplay" class="font-mono font-semibold text-amber-400">------</span>
+          <button
+            id="joinRoomBtn"
+            title="Join Friend's Room Code"
+            class="ml-1 text-[11px] text-[#A1A1AA] hover:text-[#F5F5F7] underline decoration-white/20 underline-offset-2"
+          >
+            Join
+          </button>
+        </div>
+
+        <!-- Share Invite Link Button -->
+        <button
+          id="shareSessionBtn"
+          class="pill-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.05] hover:bg-white/[0.1] text-[#F5F5F7] border border-white/[0.08]"
+        >
+          <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          <span>Share</span>
+        </button>
+
+        <!-- Friend Results & Leaderboard Button -->
+        <button
+          id="openResultsModalBtn"
+          class="pill-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#F5F5F7] hover:bg-white text-[#09090B] shadow-sm"
+        >
+          <span>Results</span>
+          <span id="participantCountBadge" class="px-1.5 py-0.2 rounded-full bg-black/15 font-mono text-[11px] tabular-nums">1</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Toast Notification Banner -->
+  <div id="toastBanner" class="fixed bottom-5 right-5 z-50 hidden">
+    <div class="bg-[#16161A]/95 backdrop-blur-xl border border-white/10 text-[#F5F5F7] px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2.5 text-xs font-medium">
+      <span id="toastDot" class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+      <span id="toastMessage">Notification</span>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 1: APPLE-STYLE CINEMATIC HERO SHOWCASE                        -->
+  <!-- ===================================================================== -->
+  <section id="heroSection" class="relative ambient-spotlight border-b border-white/[0.06] overflow-hidden">
+    <div class="max-w-[1320px] mx-auto px-5 sm:px-8 pt-14 pb-16 sm:pt-20 sm:pb-24">
+      <div class="max-w-3xl mx-auto text-center space-y-6">
+        <!-- Status Kicker -->
+        <div class="hero-stagger inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-medium text-[#D4D4D8]">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+          <span>Semester 1 C Programming Mastery • Strictly No Pointers</span>
+        </div>
+
+        <!-- Display Headline -->
+        <h1 class="hero-stagger display-heading text-4xl sm:text-6xl font-bold text-[#F5F5F7] leading-[1.06]">
+          Write pure C.<br />
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#F5F5F7] via-[#D4D4D8] to-[#71717A]">
+            Compiled &amp; judged live.
+          </span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="hero-stagger text-sm sm:text-lg text-[#A1A1AA] max-w-2xl mx-auto leading-relaxed font-normal">
+          Twenty handcrafted WAP challenges spanning conditionals, number theory, patterns, 1D/2D arrays, strings, recursion, and structures. Zero hints—just raw GCC C17 compilation and real-time friend scoreboards.
+        </p>
+
+        <!-- Primary Action Pills -->
+        <div class="hero-stagger pt-2 flex flex-wrap items-center justify-center gap-3">
+          <button
+            id="heroStartBtn"
+            class="pill-btn px-6 py-3 rounded-full text-xs sm:text-sm font-semibold bg-[#F5F5F7] hover:bg-white text-[#09090B] shadow-lg shadow-white/5 flex items-center gap-2"
+          >
+            <span>Launch Compiler IDE</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+          </button>
+          <button
+            id="heroBrowseCurriculumBtn"
+            class="pill-btn px-6 py-3 rounded-full text-xs sm:text-sm font-medium bg-white/[0.04] hover:bg-white/[0.08] text-[#F5F5F7] border border-white/[0.09]"
+          >
+            Explore All 20 WAPs
+          </button>
+        </div>
+      </div>
+
+      <!-- 4-Column Apple Bento Spec Strip -->
+      <div class="hero-stagger mt-14 grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 max-w-4xl mx-auto">
+        <div class="apple-card rounded-2xl p-4 sm:p-5 text-left">
+          <div class="text-[11px] font-medium uppercase tracking-wider text-[#71717A]">Curriculum</div>
+          <div class="mt-1.5 text-2xl sm:text-3xl font-bold text-[#F5F5F7] tabular-nums">20 WAPs</div>
+          <div class="mt-1 text-xs text-[#A1A1AA]">Easy, Medium &amp; Hard tiers</div>
+        </div>
+        <div class="apple-card rounded-2xl p-4 sm:p-5 text-left">
+          <div class="text-[11px] font-medium uppercase tracking-wider text-[#71717A]">Syllabus Guard</div>
+          <div class="mt-1.5 text-2xl sm:text-3xl font-bold text-amber-400 tabular-nums">0 Pointers</div>
+          <div class="mt-1 text-xs text-[#A1A1AA]">Blocks <code class="font-mono text-[11px]">*</code>, <code class="font-mono text-[11px]">-&gt;</code> &amp; <code class="font-mono text-[11px]">malloc</code></div>
+        </div>
+        <div class="apple-card rounded-2xl p-4 sm:p-5 text-left">
+          <div class="text-[11px] font-medium uppercase tracking-wider text-[#71717A]">Compiler Engine</div>
+          <div class="mt-1.5 text-2xl sm:text-3xl font-bold text-[#10B981] tabular-nums">GCC C17</div>
+          <div class="mt-1 text-xs text-[#A1A1AA]">4 hidden &amp; public test cases each</div>
+        </div>
+        <div class="apple-card rounded-2xl p-4 sm:p-5 text-left">
+          <div class="text-[11px] font-medium uppercase tracking-wider text-[#71717A]">Multiplayer Sync</div>
+          <div class="mt-1.5 text-2xl sm:text-3xl font-bold text-[#F5F5F7] tabular-nums">Live Room</div>
+          <div class="mt-1 text-xs text-[#A1A1AA]">Compare 20-question grids live</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 2: GSAP SCROLLTRIGGER BENTO CURRICULUM MATRIX (20 QUESTIONS)  -->
+  <!-- ===================================================================== -->
+  <section id="curriculumSection" class="border-b border-white/[0.06] bg-[#09090B] py-16 sm:py-24 px-5 sm:px-8">
+    <div class="max-w-[1440px] mx-auto space-y-12">
+      <!-- Section Header -->
+      <div class="curriculum-header flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-widest text-amber-400">Syllabus Roadmap</span>
+          <h2 class="display-heading text-2xl sm:text-4xl font-bold text-[#F5F5F7] mt-1.5">
+            20 Semester-1 C Practice Problems
+          </h2>
+          <p class="text-xs sm:text-sm text-[#A1A1AA] mt-2 max-w-xl">
+            Click any problem card below to load it directly into the live GCC compiler workbench. Completed programs sync automatically to your shared room.
+          </p>
+        </div>
+
+        <!-- Legend Pills -->
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span class="px-3 py-1 rounded-full bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/25 font-medium">Easy (Q1–Q6)</span>
+          <span class="px-3 py-1 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/25 font-medium">Medium (Q7–Q14)</span>
+          <span class="px-3 py-1 rounded-full bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/25 font-medium">Hard (Q15–Q20)</span>
+        </div>
+      </div>
+
+      <!-- 20-Card Bento Grid Rendered Dynamically & Animated via ScrollTrigger -->
+      <div id="curriculumBentoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 3: INTERACTIVE C COMPILER & STRICT AUTOMATED JUDGE WORKBENCH  -->
+  <!-- ===================================================================== -->
+  <section id="workbenchSection" class="flex-1 max-w-[1800px] w-full mx-auto px-3 sm:px-6 py-8 sm:py-10">
+    <!-- Workbench Section Header -->
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3 px-1">
+      <div class="flex items-center gap-3">
+        <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+        <h2 class="text-sm sm:text-base font-semibold tracking-tight text-[#F5F5F7]">Interactive C Studio &amp; Automated Judge</h2>
+        <span class="hidden sm:inline text-xs text-[#71717A]">• Zero Hints • Press <kbd class="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/10 font-mono text-[10px] text-[#D4D4D8]">Ctrl + Enter</kbd> to Submit</span>
+      </div>
+      <div class="text-xs text-[#A1A1AA] tabular-nums" id="workbenchProgressText">
+        Active Question: #01 of 20
+      </div>
+    </div>
+
+    <!-- Split Studio Container -->
+    <div class="studio-panel rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[760px] lg:h-[calc(100vh-110px)] shadow-2xl">
+      
+      <!-- LEFT PANE: Problem Selector + Statement (5 cols on lg) -->
+      <div class="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-white/[0.065] flex flex-col bg-[#0D0D10] lg:h-full overflow-hidden">
+        
+        <!-- Problem Navigation Bar & Filter -->
+        <div class="p-3.5 bg-[#121216] border-b border-white/[0.065] flex flex-col gap-3">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5">
+              <button id="prevProblemBtn" class="pill-btn p-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.09] text-[#A1A1AA] hover:text-[#F5F5F7] border border-white/[0.07]" title="Previous Question">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+              </button>
+              <select id="problemDropdown" class="bg-[#09090B] border border-white/[0.09] text-[#F5F5F7] text-xs font-medium rounded-full px-3 py-1.5 focus:outline-none focus:border-amber-400/60 max-w-[205px] sm:max-w-[270px] truncate">
+                <!-- Populated dynamically -->
+              </select>
+              <button id="nextProblemBtn" class="pill-btn p-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.09] text-[#A1A1AA] hover:text-[#F5F5F7] border border-white/[0.07]" title="Next Question">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+
+            <!-- Difficulty Filter Pills -->
+            <div class="flex items-center gap-1 bg-[#09090B] p-0.5 rounded-full border border-white/[0.06] text-[11px]">
+              <button data-diff="ALL" class="diff-filter-btn px-2.5 py-1 rounded-full bg-white/[0.1] text-[#F5F5F7] font-medium">All</button>
+              <button data-diff="Easy" class="diff-filter-btn px-2 py-1 rounded-full text-[#A1A1AA] hover:text-[#F5F5F7]">Easy</button>
+              <button data-diff="Medium" class="diff-filter-btn px-2 py-1 rounded-full text-[#A1A1AA] hover:text-[#F5F5F7]">Med</button>
+              <button data-diff="Hard" class="diff-filter-btn px-2 py-1 rounded-full text-[#A1A1AA] hover:text-[#F5F5F7]">Hard</button>
+            </div>
+          </div>
+
+          <!-- Compact 20-Question Number Strip -->
+          <div id="questionNumberGrid" class="grid grid-cols-10 gap-1.5 pt-0.5">
+            <!-- 1..20 pills rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Problem Description Scrollable Container (lenis-prevent allows native inner scroll) -->
+        <div id="problemStatementPane" data-lenis-prevent class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
+          <!-- Header Metadata -->
+          <div id="problemContentAnimate" class="space-y-5">
+            <div class="space-y-2.5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span id="probNumberBadge" class="font-mono text-xs font-semibold text-amber-400 bg-amber-400/10 border border-amber-400/25 px-2.5 py-0.5 rounded-full tabular-nums">
+                    WAP #01
+                  </span>
+                  <span id="probDifficultyBadge" class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/25">
+                    Easy
+                  </span>
+                  <span id="probTopicBadge" class="text-xs text-[#A1A1AA] bg-white/[0.03] border border-white/[0.07] px-2.5 py-0.5 rounded-full">
+                    Conditionals &amp; Operators
+                  </span>
+                </div>
+                <span id="probStatusBadge" class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/[0.04] text-[#71717A] border border-white/[0.06]">
+                  UNSOLVED
+                </span>
+              </div>
+              <h3 id="probTitle" class="display-heading text-lg sm:text-xl font-bold text-[#F5F5F7]">
+                Loading Problem...
+              </h3>
+            </div>
+
+            <!-- Problem Description -->
+            <div id="probDescription" class="text-[13.5px] text-[#D4D4D8] leading-relaxed space-y-3">
+            </div>
+
+            <!-- Input / Output Specification Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="bg-[#131317] border border-white/[0.065] rounded-2xl p-3.5">
+                <h4 class="text-[10px] font-semibold uppercase tracking-widest text-[#71717A] mb-1.5">Input Format (stdin)</h4>
+                <p id="probInputFormat" class="text-xs text-[#D4D4D8] leading-relaxed"></p>
+              </div>
+              <div class="bg-[#131317] border border-white/[0.065] rounded-2xl p-3.5">
+                <h4 class="text-[10px] font-semibold uppercase tracking-widest text-[#71717A] mb-1.5">Output Format (stdout)</h4>
+                <p id="probOutputFormat" class="text-xs text-[#D4D4D8] leading-relaxed"></p>
+              </div>
+            </div>
+
+            <!-- Constraints -->
+            <div class="bg-[#131317] border border-white/[0.065] rounded-2xl p-3.5">
+              <h4 class="text-[10px] font-semibold uppercase tracking-widest text-[#71717A] mb-1.5">Constraints &amp; Rules</h4>
+              <ul id="probConstraints" class="text-xs font-mono text-[#A1A1AA] space-y-1 list-disc list-inside"></ul>
+            </div>
+
+            <!-- Sample Test Cases -->
+            <div class="space-y-3">
+              <h4 class="text-[11px] font-semibold uppercase tracking-widest text-[#A1A1AA]">Sample Cases</h4>
+              <div id="sampleCasesContainer" class="space-y-3">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANE: C Code Editor + Compiler Console & Judge (7 cols on lg) -->
+      <div class="lg:col-span-7 flex flex-col bg-[#09090B] lg:h-full overflow-hidden">
+        
+        <!-- Editor Toolbar -->
+        <div class="px-4 py-2.5 bg-[#121216] border-b border-white/[0.065] flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5">
+            <!-- macOS Window Dots + File Tab -->
+            <div class="hidden sm:flex items-center gap-1.5 mr-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-white/10"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-white/10"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-white/10"></span>
+            </div>
+            <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#09090B] border border-white/[0.08] text-xs font-mono text-[#F5F5F7]">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+              <span>solution.c</span>
+            </div>
+            <span id="compilerEngineStatus" class="text-[11px] text-[#71717A] hidden md:inline">
+              GCC (C17) • Strict No-Pointer Mode
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <!-- Font Size Controls -->
+            <div class="hidden sm:flex items-center bg-[#09090B] border border-white/[0.08] rounded-full overflow-hidden">
+              <button id="fontDecBtn" class="px-2.5 py-1 text-xs text-[#A1A1AA] hover:text-[#F5F5F7] hover:bg-white/[0.06]" title="Decrease Font">A-</button>
+              <button id="fontIncBtn" class="px-2.5 py-1 text-xs text-[#A1A1AA] hover:text-[#F5F5F7] hover:bg-white/[0.06] border-l border-white/[0.08]" title="Increase Font">A+</button>
+            </div>
+
+            <!-- Reset Starter Template -->
+            <button
+              id="resetCodeBtn"
+              class="pill-btn px-3 py-1.5 rounded-full text-xs font-medium bg-white/[0.04] hover:bg-white/[0.09] text-[#A1A1AA] hover:text-[#F5F5F7] border border-white/[0.08]"
+              title="Reset to minimal C template"
+            >
+              Reset
+            </button>
+
+            <!-- Run Custom Input Button -->
+            <button
+              id="runCustomBtn"
+              class="pill-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.06] hover:bg-white/[0.12] text-[#F5F5F7] border border-white/[0.1]"
+              title="Compile & Run with Custom Input"
+            >
+              <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+              </svg>
+              <span>Run</span>
+            </button>
+
+            <!-- Submit & Judge All Test Cases -->
+            <button
+              id="submitJudgeBtn"
+              class="pill-btn flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-[#10B981] hover:bg-[#059669] text-[#09090B] shadow-md shadow-[#10B981]/15"
+              title="Compile & Evaluate Against All Test Cases (Ctrl+Enter)"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+              </svg>
+              <span>Submit &amp; Judge</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Code Editor Area -->
+        <div class="relative flex-1 min-h-[290px] sm:min-h-[340px] flex bg-[#09090B] overflow-hidden">
+          <!-- Line Numbers Gutter -->
+          <div
+            id="lineNumbers"
+            class="line-numbers w-12 py-4 pr-3 text-right font-mono text-xs sm:text-[13px] text-[#52525B] bg-[#09090B] border-r border-white/[0.05] select-none overflow-hidden tabular-nums"
+          >1</div>
+
+          <!-- Textarea Editor -->
+          <textarea
+            id="codeEditor"
+            data-lenis-prevent
+            spellcheck="false"
+            autocapitalize="off"
+            autocomplete="off"
+            autocorrect="off"
+            class="editor-textarea flex-1 w-full h-full p-4 bg-[#09090B] text-[#F5F5F7] font-mono text-xs sm:text-[13px] resize-none focus:outline-none overflow-auto"
+            placeholder="// Write your C program here..."
+          ></textarea>
+        </div>
+
+        <!-- Bottom Console & Automated Judge Panel -->
+        <div class="h-[265px] sm:h-[290px] border-t border-white/[0.065] bg-[#111114] flex flex-col">
+          <!-- Console Tabs -->
+          <div class="px-4 py-2 border-b border-white/[0.06] flex items-center justify-between">
+            <div class="flex items-center gap-1 bg-[#09090B] p-0.5 rounded-full border border-white/[0.06]">
+              <button
+                id="tabJudgeBtn"
+                class="console-tab px-3 py-1 rounded-full text-xs font-medium bg-white/[0.1] text-[#F5F5F7]"
+              >
+                Test Case Judge
+              </button>
+              <button
+                id="tabCustomBtn"
+                class="console-tab px-3 py-1 rounded-full text-xs font-medium text-[#A1A1AA] hover:text-[#F5F5F7]"
+              >
+                Custom Stdin / Stdout
+              </button>
+            </div>
+            <div id="executionMeta" class="text-[11px] font-mono text-[#71717A] tabular-nums">
+              Ready (Ctrl+Enter to Judge)
+            </div>
+          </div>
+
+          <!-- Tab 1: Automated Test Case Judge Results -->
+          <div id="judgePanel" data-lenis-prevent class="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3">
+            <div id="judgeSummaryBanner" class="bg-[#09090B] border border-white/[0.065] rounded-2xl p-3 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#383842]"></span>
+                <span class="text-xs text-[#A1A1AA]">Click <strong class="text-[#F5F5F7]">Submit &amp; Judge</strong> to compile your C code and verify all test cases.</span>
+              </div>
+              <span class="text-[11px] font-mono text-[#71717A] tabular-nums">0 / 4 Passed</span>
+            </div>
+
+            <div id="testCaseResultsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <!-- Test case cards rendered here -->
+            </div>
+          </div>
+
+          <!-- Tab 2: Custom Input & Raw Compiler Output -->
+          <div id="customPanel" data-lenis-prevent class="hidden flex-1 overflow-y-auto p-3.5 sm:p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="flex flex-col">
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="customStdinInput" class="text-[10px] font-semibold uppercase tracking-widest text-[#71717A]">Standard Input (stdin)</label>
+                <button id="loadSampleStdinBtn" class="text-[11px] text-amber-400 hover:underline">Load Sample 1</button>
+              </div>
+              <textarea
+                id="customStdinInput"
+                data-lenis-prevent
+                class="flex-1 w-full bg-[#09090B] border border-white/[0.07] focus:border-amber-400/50 rounded-2xl p-3 font-mono text-xs text-[#F5F5F7] resize-none focus:outline-none"
+                placeholder="Enter custom stdin values..."
+              ></textarea>
+            </div>
+
+            <div class="flex flex-col">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[10px] font-semibold uppercase tracking-widest text-[#71717A]">Program Output / GCC Diagnostics</span>
+                <span id="customRunStatus" class="text-[11px] font-mono text-[#71717A] tabular-nums">Idle</span>
+              </div>
+              <pre
+                id="customStdoutOutput"
+                data-lenis-prevent
+                class="flex-1 w-full bg-[#09090B] border border-white/[0.07] rounded-2xl p-3 font-mono text-xs text-[#D4D4D8] overflow-auto whitespace-pre-wrap"
+              >Run your code to view stdout or compiler errors here.</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Minimal Apple-Style Footer -->
+  <footer class="border-t border-white/[0.06] py-6 px-5 text-center text-xs text-[#71717A]">
+    <div class="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <span>C-WAP Studio • Semester 1 C Programming Practice Environment</span>
+      <span class="font-mono text-[11px] text-[#52525B]">GCC C17 Standard • Strictly Non-Pointer Syllabus</span>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- MODALS: FRIEND LEADERBOARD, JOIN ROOM, RESET CONFIRMATION             -->
+  <!-- ===================================================================== -->
+
+  <!-- Friend Results & Leaderboard Modal -->
+  <div id="resultsModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-5">
+    <div class="bg-[#111114] border border-white/10 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-white/[0.07] flex items-center justify-between">
+        <div>
+          <h3 class="display-heading text-lg font-bold text-[#F5F5F7]">Live Quiz Room &amp; Friend Results</h3>
+          <p class="text-xs text-[#A1A1AA] mt-0.5">Share your room link with friends—every submission updates here in real time.</p>
+        </div>
+        <button id="closeResultsModalBtn" class="pill-btn p-2 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-[#A1A1AA] hover:text-[#F5F5F7]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Share Bar inside Modal -->
+      <div class="px-6 py-3 bg-[#09090B] border-b border-white/[0.07] flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2 text-xs">
+          <span class="text-[#71717A]">Active Room ID:</span>
+          <code id="modalRoomCode" class="px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/10 font-mono font-semibold text-amber-400">------</code>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="copyShareUrlModalBtn" class="pill-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-[#F5F5F7] hover:bg-white text-[#09090B]">
+            Copy Invite Link
+          </button>
+          <button id="createNewRoomBtn" class="pill-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.05] hover:bg-white/[0.1] text-[#F5F5F7] border border-white/[0.08]">
+            New Room
+          </button>
+        </div>
+      </div>
+
+      <!-- Leaderboard & Per-Question Matrix -->
+      <div data-lenis-prevent class="flex-1 overflow-y-auto p-6 space-y-4">
+        <div id="participantsList" class="space-y-3.5">
+          <!-- Participant cards rendered here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Join Room Modal -->
+  <div id="joinRoomModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-[#111114] border border-white/10 rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="display-heading text-base font-bold text-[#F5F5F7]">Join Friend's Quiz Room</h3>
+        <button id="closeJoinModalBtn" class="p-1.5 rounded-full text-[#A1A1AA] hover:text-[#F5F5F7]">✕</button>
+      </div>
+      <p class="text-xs text-[#A1A1AA]">Enter the Room Code shared by your friend to compare scores live.</p>
+      <input
+        id="roomCodeInput"
+        type="text"
+        maxlength="12"
+        placeholder="e.g. CWAP42"
+        class="w-full bg-[#09090B] border border-white/10 focus:border-amber-400/60 rounded-2xl px-4 py-3 font-mono text-sm uppercase text-[#F5F5F7] focus:outline-none"
+      />
+      <div class="flex justify-end gap-2">
+        <button id="cancelJoinBtn" class="pill-btn px-4 py-2 rounded-full text-xs font-medium bg-white/[0.05] text-[#A1A1AA] hover:text-[#F5F5F7]">Cancel</button>
+        <button id="confirmJoinBtn" class="pill-btn px-5 py-2 rounded-full text-xs font-semibold bg-[#F5F5F7] hover:bg-white text-[#09090B]">Join Room</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset Confirmation Modal (No browser confirm()) -->
+  <div id="resetModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-[#111114] border border-white/10 rounded-3xl w-full max-w-sm p-6 space-y-4 shadow-2xl">
+      <h3 class="display-heading text-base font-bold text-[#F5F5F7]">Reset Editor Code?</h3>
+      <p class="text-xs text-[#A1A1AA] leading-relaxed">This will discard your current code for this question and restore the minimal C starter template.</p>
+      <div class="flex justify-end gap-2">
+        <button id="cancelResetBtn" class="pill-btn px-4 py-2 rounded-full text-xs font-medium bg-white/[0.05] text-[#A1A1AA] hover:text-[#F5F5F7]">Cancel</button>
+        <button id="confirmResetBtn" class="pill-btn px-4 py-2 rounded-full text-xs font-semibold bg-[#EF4444] hover:bg-[#DC2626] text-white">Reset Code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // =========================================================================
+    // 0. LENIS SMOOTH SCROLL + GSAP SCROLLTRIGGER INITIALIZATION
+    // =========================================================================
+    let lenis = null;
+
+    function initSmoothScrollAndAnimations() {
+      if (typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
+        gsap.registerPlugin(ScrollTrigger);
+      }
+
+      if (typeof Lenis !== "undefined") {
+        lenis = new Lenis({
+          duration: 1.15,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+          wheelMultiplier: 1.0,
+          touchMultiplier: 1.5
+        });
+
+        if (typeof ScrollTrigger !== "undefined") {
+          lenis.on("scroll", ScrollTrigger.update);
+        }
+
+        if (typeof gsap !== "undefined") {
+          gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+          });
+          gsap.ticker.lagSmoothing(0);
+        }
+      }
+
+      // Hero Entrance Stagger
+      if (typeof gsap !== "undefined") {
+        gsap.from(".hero-stagger", {
+          y: 26,
+          opacity: 0,
+          duration: 0.9,
+          stagger: 0.1,
+          ease: "power3.out",
+          clearProps: "transform"
+        });
+
+        // Curriculum Header Reveal
+        gsap.from(".curriculum-header", {
+          scrollTrigger: {
+            trigger: "#curriculumSection",
+            start: "top 82%",
+            once: true
+          },
+          y: 24,
+          opacity: 0,
+          duration: 0.8,
+          ease: "power3.out"
+        });
+
+        // Bento Cards Staggered ScrollTrigger
+        gsap.from(".bento-wap-card", {
+          scrollTrigger: {
+            trigger: "#curriculumBentoGrid",
+            start: "top 85%",
+            once: true
+          },
+          y: 28,
+          opacity: 0,
+          duration: 0.7,
+          stagger: {
+            amount: 0.55,
+            from: "start"
+          },
+          ease: "power3.out",
+          clearProps: "transform"
+        });
+
+        // Workbench Entrance
+        gsap.from("#workbenchSection .studio-panel", {
+          scrollTrigger: {
+            trigger: "#workbenchSection",
+            start: "top 86%",
+            once: true
+          },
+          y: 30,
+          opacity: 0,
+          duration: 0.85,
+          ease: "power3.out",
+          clearProps: "transform"
+        });
+      }
+    }
+
+    function smoothScrollToTarget(selector) {
+      const targetEl = document.querySelector(selector);
+      if (!targetEl) return;
+      if (lenis) {
+        lenis.scrollTo(targetEl, { offset: -64, duration: 1.1 });
+      } else {
+        targetEl.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+
+    // =========================================================================
+    // 1. CURRICULUM DATASET: 20 SEM-1 C WAP QUESTIONS (STRICTLY NO POINTERS)
+    // =========================================================================
+    const STARTER_CODE = `#include <stdio.h>
+
+int main() {
+    // Write your C program here
+    
+    return 0;
+}`;
+
+    const PROBLEMS = [
+      {
+        id: 1,
+        title: "Temperature & Unit Converter with Slab Classification",
+        difficulty: "Easy",
+        topic: "Variables, Operators & Conditionals",
+        description: `Write a C program that reads an integer mode <code>M</code> and a floating-point value <code>V</code>.<br><br>
+        • If <code>M == 1</code>, convert <code>V</code> from Celsius to Fahrenheit using <code>F = (V * 9.0 / 5.0) + 32.0</code>, and classify the Celsius temperature: <code>Cold</code> (&lt; 15.0), <code>Moderate</code> (15.0 to 30.0 inclusive), or <code>Hot</code> (&gt; 30.0).<br>
+        • If <code>M == 2</code>, convert <code>V</code> from Kilometers to Miles using <code>Miles = V * 0.621371</code>, and classify the distance in km: <code>Short</code> (&lt; 5.0), <code>Medium</code> (5.0 to 20.0 inclusive), or <code>Long</code> (&gt; 20.0).<br>
+        • For any other mode, print <code>Invalid Mode</code>.`,
+        inputFormat: "Two values separated by space: an integer M and a double V.",
+        outputFormat: "Converted value formatted to 2 decimal places followed by a space and the classification label, OR 'Invalid Mode'.",
+        constraints: ["1 <= M <= 10", "-100.0 <= V <= 10000.0", "No pointers allowed"],
+        testCases: [
+          { input: "1 25.0", expected: "77.00 Moderate", isSample: true },
+          { input: "2 10.0", expected: "6.21 Medium", isSample: true },
+          { input: "1 36.5", expected: "97.70 Hot", isSample: false },
+          { input: "5 12.0", expected: "Invalid Mode", isSample: false }
+        ]
+      },
+      {
+        id: 2,
+        title: "Gregorian Leap Year & Calendar Date Validator",
+        difficulty: "Easy",
+        topic: "Nested Conditionals & Logical Operators",
+        description: `Write a C program that takes a date as three integers: day <code>D</code>, month <code>M</code>, and year <code>Y</code>. Determine whether the given date is a valid date in the Gregorian calendar.<br><br>
+        Remember that a year is a leap year if it is divisible by 400, OR divisible by 4 and not divisible by 100.`,
+        inputFormat: "Three space-separated integers: D M Y",
+        outputFormat: "Print 'Valid Date' if valid, otherwise print 'Invalid Date'.",
+        constraints: ["1 <= Y <= 9999", "-50 <= D, M <= 100", "No pointers allowed"],
+        testCases: [
+          { input: "29 2 2024", expected: "Valid Date", isSample: true },
+          { input: "29 2 1900", expected: "Invalid Date", isSample: true },
+          { input: "31 4 2023", expected: "Invalid Date", isSample: false },
+          { input: "31 12 2000", expected: "Valid Date", isSample: false }
+        ]
+      },
+      {
+        id: 3,
+        title: "Progressive Electricity Bill Slab Calculator",
+        difficulty: "Easy",
+        topic: "If-Else Ladder & Arithmetic",
+        description: `Write a C program to compute the total electricity bill from total units consumed <code>U</code> according to progressive slabs:<br><br>
+        • First 100 units (1–100): ₹1.50 per unit<br>
+        • Next 100 units (101–200): ₹2.50 per unit<br>
+        • Next 300 units (201–500): ₹4.00 per unit<br>
+        • Above 500 units: ₹6.00 per unit<br><br>
+        Additionally, if the base bill exceeds ₹1000.00, add a 15% surcharge. Add a fixed meter charge of ₹50.00 to all bills.`,
+        inputFormat: "A single integer U representing consumed units.",
+        outputFormat: "Total payable amount formatted to 2 decimal places (e.g., 250.00).",
+        constraints: ["0 <= U <= 10000", "No pointers allowed"],
+        testCases: [
+          { input: "80", expected: "170.00", isSample: true },
+          { input: "250", expected: "650.00", isSample: true },
+          { input: "550", expected: "2235.00", isSample: false },
+          { input: "0", expected: "50.00", isSample: false }
+        ]
+      },
+      {
+        id: 4,
+        title: "Armstrong & Strong Number Verifier",
+        difficulty: "Easy",
+        topic: "While Loops & Digit Extraction",
+        description: `Write a C program that reads a positive integer <code>N</code> and checks two properties:<br><br>
+        1. <strong>Armstrong Number:</strong> Sum of its own digits each raised to the power of the number of digits equals <code>N</code> (e.g., 153 = 1³ + 5³ + 3³).<br>
+        2. <strong>Strong Number:</strong> Sum of the factorials of its digits equals <code>N</code> (e.g., 145 = 1! + 4! + 5!).<br><br>
+        Print <code>Armstrong and Strong</code>, <code>Armstrong Only</code>, <code>Strong Only</code>, or <code>Neither</code>.`,
+        inputFormat: "A single positive integer N.",
+        outputFormat: "One of the four exact strings describing N.",
+        constraints: ["1 <= N <= 100000", "No pointers allowed"],
+        testCases: [
+          { input: "153", expected: "Armstrong Only", isSample: true },
+          { input: "145", expected: "Strong Only", isSample: true },
+          { input: "1", expected: "Armstrong and Strong", isSample: false },
+          { input: "200", expected: "Neither", isSample: false }
+        ]
+      },
+      {
+        id: 5,
+        title: "Fibonacci Series Generator & Nth Term",
+        difficulty: "Easy",
+        topic: "For Loops & Series",
+        description: `Write a C program that reads an integer <code>N</code> and prints the first <code>N</code> terms of the Fibonacci sequence starting from <code>0</code> and <code>1</code> separated by a single space, followed on a new line by the sum of those <code>N</code> terms.`,
+        inputFormat: "A single integer N.",
+        outputFormat: "Line 1: N space-separated Fibonacci terms. Line 2: Sum of the N terms.",
+        constraints: ["1 <= N <= 40", "Use long long to avoid overflow", "No pointers allowed"],
+        testCases: [
+          { input: "6", expected: "0 1 1 2 3 5\n12", isSample: true },
+          { input: "1", expected: "0\n0", isSample: true },
+          { input: "8", expected: "0 1 1 2 3 5 8 13\n33", isSample: false },
+          { input: "2", expected: "0 1\n1", isSample: false }
+        ]
+      },
+      {
+        id: 6,
+        title: "Integer Reversal & Numeric Palindrome Check",
+        difficulty: "Easy",
+        topic: "Loops & Modulo Arithmetic",
+        description: `Write a C program that reads an integer <code>N</code> (without using character arrays or strings), computes its digit-reversed integer <code>R</code>, and checks whether <code>N</code> is a palindrome.<br><br>
+        Note: Negative numbers are not considered palindromes, though their digits should still be reversed with the negative sign preserved (e.g., -123 becomes -321).`,
+        inputFormat: "A single integer N.",
+        outputFormat: "Line 1: Reversed integer R. Line 2: 'Palindrome' or 'Not Palindrome'.",
+        constraints: ["-10^9 <= N <= 10^9", "Do not use strings or pointers"],
+        testCases: [
+          { input: "12321", expected: "12321\nPalindrome", isSample: true },
+          { input: "1200", expected: "21\nNot Palindrome", isSample: true },
+          { input: "-121", expected: "-121\nNot Palindrome", isSample: false },
+          { input: "0", expected: "0\nPalindrome", isSample: false }
+        ]
+      },
+      {
+        id: 7,
+        title: "Pascal's Triangle Pattern Generator",
+        difficulty: "Medium",
+        topic: "Nested Loops & Combinatorics",
+        description: `Write a C program that reads an integer <code>N</code> and prints the first <code>N</code> rows of Pascal's Triangle.<br><br>
+        Each row <code>i</code> (0-indexed) contains <code>i + 1</code> integers separated by a single space, with no trailing spaces at the end of any line.`,
+        inputFormat: "A single integer N.",
+        outputFormat: "N lines representing Pascal's Triangle.",
+        constraints: ["1 <= N <= 15", "No pointers allowed"],
+        testCases: [
+          { input: "5", expected: "1\n1 1\n1 2 1\n1 3 3 1\n1 4 6 4 1", isSample: true },
+          { input: "1", expected: "1", isSample: true },
+          { input: "3", expected: "1\n1 1\n1 2 1", isSample: false },
+          { input: "6", expected: "1\n1 1\n1 2 1\n1 3 3 1\n1 4 6 4 1\n1 5 10 10 5 1", isSample: false }
+        ]
+      },
+      {
+        id: 8,
+        title: "Second Largest Element & Frequency in 1D Array",
+        difficulty: "Medium",
+        topic: "1D Arrays & Linear Scan",
+        description: `Write a C program that reads <code>N</code> integers into a 1D array and finds the <strong>strictly second largest</strong> distinct element in the array along with how many times that second largest element appears.<br><br>
+        If all elements in the array are equal (so no second largest distinct element exists), print <code>None</code>.`,
+        inputFormat: "Line 1: Integer N. Line 2: N space-separated integers.",
+        outputFormat: "Two space-separated integers: '<second_largest> <frequency>' OR 'None'.",
+        constraints: ["2 <= N <= 1000", "-10^6 <= arr[i] <= 10^6", "Use array indexing arr[i], no pointers"],
+        testCases: [
+          { input: "6\n10 20 20 8 15 15", expected: "15 2", isSample: true },
+          { input: "4\n5 5 5 5", expected: "None", isSample: true },
+          { input: "5\n-10 -3 -20 -3 -10", expected: "-10 2", isSample: false },
+          { input: "3\n1 2 3", expected: "2 1", isSample: false }
+        ]
+      },
+      {
+        id: 9,
+        title: "Selection Sort & Binary Search on 1D Array",
+        difficulty: "Medium",
+        topic: "Sorting & Searching Algorithms",
+        description: `Write a C program that reads <code>N</code> integers into an array, sorts the array in ascending order using Selection Sort (or Bubble Sort), and then searches for a target integer <code>K</code> using Binary Search.<br><br>
+        Print the sorted array on the first line, and the 0-based index of <code>K</code> in the sorted array (or <code>-1</code> if not found) on the second line.`,
+        inputFormat: "Line 1: Integer N. Line 2: N space-separated integers. Line 3: Target integer K.",
+        outputFormat: "Line 1: Sorted N integers separated by space. Line 2: 0-based index of K or -1.",
+        constraints: ["1 <= N <= 500", "All elements are distinct", "No pointers allowed"],
+        testCases: [
+          { input: "5\n34 12 78 5 23\n23", expected: "5 12 23 34 78\n2", isSample: true },
+          { input: "4\n9 2 7 4\n6", expected: "2 4 7 9\n-1", isSample: true },
+          { input: "1\n42\n42", expected: "42\n0", isSample: false },
+          { input: "6\n100 -5 0 50 -20 10\n-20", expected: "-20 -5 0 10 50 100\n0", isSample: false }
+        ]
+      },
+      {
+        id: 10,
+        title: "2D Matrix Multiplication & Transpose",
+        difficulty: "Medium",
+        topic: "2D Arrays & Matrix Operations",
+        description: `Write a C program that reads Matrix <code>A</code> of dimensions <code>R1 x C1</code> and Matrix <code>B</code> of dimensions <code>R2 x C2</code>.<br><br>
+        If multiplication is invalid (<code>C1 != R2</code>), print <code>Incompatible Dimensions</code>.<br>
+        Otherwise, compute product matrix <code>P = A * B</code> (of size <code>R1 x C2</code>) and print the <strong>Transpose</strong> of <code>P</code> (of size <code>C2 x R1</code>).`,
+        inputFormat: "Line 1: R1 C1. Next R1 lines: C1 integers each. Next line: R2 C2. Next R2 lines: C2 integers each.",
+        outputFormat: "Transpose of product matrix P (C2 rows of R1 space-separated integers) OR 'Incompatible Dimensions'.",
+        constraints: ["1 <= R1, C1, R2, C2 <= 20", "No pointers allowed"],
+        testCases: [
+          { input: "2 3\n1 2 3\n4 5 6\n3 2\n7 8\n9 10\n11 12", expected: "58 139\n64 154", isSample: true },
+          { input: "2 2\n1 2\n3 4\n3 2\n1 2\n3 4\n5 6", expected: "Incompatible Dimensions", isSample: true },
+          { input: "1 2\n3 4\n2 1\n5\n6", expected: "39", isSample: false },
+          { input: "2 2\n1 0\n0 1\n2 2\n5 7\n9 2", expected: "5 9\n7 2", isSample: false }
+        ]
+      },
+      {
+        id: 11,
+        title: "String Palindrome, Character Counter & Case Toggle",
+        difficulty: "Medium",
+        topic: "Character Arrays (char[])",
+        description: `Write a C program that reads a single line of text (up to 200 characters, which may include spaces) into a <code>char</code> array.<br><br>
+        1. Count total vowels, consonants, and digits in the string.<br>
+        2. Toggle the case of every alphabet letter (uppercase to lowercase and vice versa) while keeping digits/spaces unchanged.<br>
+        3. Check if the alphanumeric characters of the string form a case-insensitive palindrome (ignoring spaces and punctuation).`,
+        inputFormat: "A single line string S.",
+        outputFormat: "Line 1: 'Vowels: V, Consonants: C, Digits: D'\nLine 2: Case-toggled string\nLine 3: 'Palindrome' or 'Not Palindrome'",
+        constraints: ["1 <= length(S) <= 200", "Use char str[205] array indexing only — NO char* pointers"],
+        testCases: [
+          { input: "Race car 101", expected: "Vowels: 3, Consonants: 4, Digits: 3\nrACE CAR 101\nPalindrome", isSample: true },
+          { input: "Hello World 2026", expected: "Vowels: 3, Consonants: 7, Digits: 4\nhELLO wORLD 2026\nNot Palindrome", isSample: true },
+          { input: "A man a plan a canal Panama", expected: "Vowels: 10, Consonants: 11, Digits: 0\na MAN A PLAN A CANAL pANAMA\nPalindrome", isSample: false },
+          { input: "C17", expected: "Vowels: 0, Consonants: 1, Digits: 2\nc17\nNot Palindrome", isSample: false }
+        ]
+      },
+      {
+        id: 12,
+        title: "Case-Insensitive Anagram Checker via Frequency Array",
+        difficulty: "Medium",
+        topic: "Strings & Frequency Hashing",
+        description: `Write a C program that reads two single-word strings <code>S1</code> and <code>S2</code> (containing only English alphabets) and determines whether they are anagrams of each other (case-insensitive) using a 26-element integer frequency array.`,
+        inputFormat: "Two lines containing strings S1 and S2 respectively.",
+        outputFormat: "Print 'Anagram' if they are anagrams, else 'Not Anagram'.",
+        constraints: ["1 <= length(S1), length(S2) <= 100", "Use char arrays only, no pointers"],
+        testCases: [
+          { input: "Listen\nSilent", expected: "Anagram", isSample: true },
+          { input: "Triangle\nIntegral", expected: "Anagram", isSample: true },
+          { input: "Hello\nWorld", expected: "Not Anagram", isSample: false },
+          { input: "aab\nabb", expected: "Not Anagram", isSample: false }
+        ]
+      },
+      {
+        id: 13,
+        title: "Recursive GCD, LCM & Prime Factorization",
+        difficulty: "Medium",
+        topic: "Functions & Recursion",
+        description: `Write a C program that implements a <strong>recursive function</strong> <code>int gcd(int a, int b)</code> to find the Greatest Common Divisor of two positive integers <code>A</code> and <code>B</code>, computes their Least Common Multiple <code>LCM</code>, and prints all prime factors of <code>A</code> in non-decreasing order.`,
+        inputFormat: "Two space-separated positive integers A and B.",
+        outputFormat: "Line 1: 'GCD: <g>, LCM: <l>'\nLine 2: Prime factors of A separated by a single space.",
+        constraints: ["2 <= A, B <= 100000", "Use long long for LCM", "No pointers allowed"],
+        testCases: [
+          { input: "36 48", expected: "GCD: 12, LCM: 144\n2 2 3 3", isSample: true },
+          { input: "17 23", expected: "GCD: 1, LCM: 391\n17", isSample: true },
+          { input: "100 25", expected: "GCD: 25, LCM: 100\n2 2 5 5", isSample: false },
+          { input: "12 18", expected: "GCD: 6, LCM: 36\n2 2 3", isSample: false }
+        ]
+      },
+      {
+        id: 14,
+        title: "Student Gradebook Ranking using Struct Array",
+        difficulty: "Medium",
+        topic: "Structures (struct) & Sorting",
+        description: `Define a structure <code>struct Student</code> containing <code>int roll</code>, <code>char name[30]</code>, and <code>float cgpa</code>.<br><br>
+        Read <code>N</code> student records into an array <code>struct Student s[50]</code> (passed by value / array indexing — <strong>no struct pointers</strong>). Sort the students in descending order of <code>cgpa</code>. If two students have the exact same <code>cgpa</code>, sort them by ascending <code>roll</code> number.`,
+        inputFormat: "Line 1: Integer N. Next N lines: roll name cgpa (name is a single word).",
+        outputFormat: "N lines formatted as: '<roll> <name> <cgpa to 2 decimal places>' in ranked order.",
+        constraints: ["1 <= N <= 50", "Strictly NO pointers or arrow (->) operator"],
+        testCases: [
+          { input: "3\n101 Aarav 8.75\n102 Diya 9.40\n103 Kabir 8.75", expected: "102 Diya 9.40\n101 Aarav 8.75\n103 Kabir 8.75", isSample: true },
+          { input: "2\n55 Rohan 7.80\n12 Meera 9.10", expected: "12 Meera 9.10\n55 Rohan 7.80", isSample: true },
+          { input: "1\n10 Ananya 9.85", expected: "10 Ananya 9.85", isSample: false },
+          { input: "4\n4 D 8.0\n2 B 9.0\n3 C 8.0\n1 A 9.0", expected: "1 A 9.00\n2 B 9.00\n3 C 8.00\n4 D 8.00", isSample: false }
+        ]
+      },
+      {
+        id: 15,
+        title: "Clockwise Spiral Order Traversal of a 2D Matrix",
+        difficulty: "Hard",
+        topic: "2D Matrix Boundary Simulation",
+        description: `Write a C program that reads an <code>R x C</code> integer matrix and prints all its elements in clockwise spiral order starting from the top-left element <code>mat[0][0]</code>.`,
+        inputFormat: "Line 1: Two integers R and C. Next R lines: C space-separated integers each.",
+        outputFormat: "R * C space-separated integers representing the spiral traversal.",
+        constraints: ["1 <= R, C <= 20", "No pointers allowed"],
+        testCases: [
+          { input: "3 3\n1 2 3\n4 5 6\n7 8 9", expected: "1 2 3 6 9 8 7 4 5", isSample: true },
+          { input: "3 4\n1 2 3 4\n5 6 7 8\n9 10 11 12", expected: "1 2 3 4 8 12 11 10 9 5 6 7", isSample: true },
+          { input: "1 4\n10 20 30 40", expected: "10 20 30 40", isSample: false },
+          { input: "4 1\n1\n2\n3\n4", expected: "1 2 3 4", isSample: false }
+        ]
+      },
+      {
+        id: 16,
+        title: "Longest Word & Total Word Count in a Sentence",
+        difficulty: "Hard",
+        topic: "String Tokenization without strtok Pointers",
+        description: `Write a C program that reads a sentence into a <code>char</code> array (up to 300 characters) where words are separated by one or more spaces.<br><br>
+        Without using pointers, count the total number of words and find the <strong>first longest word</strong> in the sentence.`,
+        inputFormat: "A single line containing words separated by spaces.",
+        outputFormat: "Line 1: 'Word Count: <count>'\nLine 2: 'Longest Word: <word>'",
+        constraints: ["1 <= length <= 300", "At least one non-space character exists", "No pointers allowed"],
+        testCases: [
+          { input: "C programming builds strong logic", expected: "Word Count: 5\nLongest Word: programming", isSample: true },
+          { input: "   code   fast   play   ", expected: "Word Count: 3\nLongest Word: code", isSample: true },
+          { input: "Algorithm", expected: "Word Count: 1\nLongest Word: Algorithm", isSample: false },
+          { input: "one two three four", expected: "Word Count: 4\nLongest Word: three", isSample: false }
+        ]
+      },
+      {
+        id: 17,
+        title: "Run-Length String Compression",
+        difficulty: "Hard",
+        topic: "Character Arrays & In-Place Encoding",
+        description: `Write a C program that reads a non-empty string <code>S</code> of lowercase letters and compresses consecutive repeating characters into <code>&lt;char&gt;&lt;count&gt;</code> format (e.g., <code>aaabbc</code> becomes <code>a3b2c1</code>).<br><br>
+        If the compressed string is strictly shorter than the original string, print the compressed string; otherwise, print the original string unchanged.`,
+        inputFormat: "A single word string S.",
+        outputFormat: "The compressed string if shorter than S, otherwise S.",
+        constraints: ["1 <= length(S) <= 200", "No pointers allowed"],
+        testCases: [
+          { input: "aaabbbbbcc", expected: "a3b5c2", isSample: true },
+          { input: "abcd", expected: "abcd", isSample: true },
+          { input: "aabbcc", expected: "aabbcc", isSample: false },
+          { input: "zzzzzz", expected: "z6", isSample: false }
+        ]
+      },
+      {
+        id: 18,
+        title: "Saddle Point Finder in a 2D Matrix",
+        difficulty: "Hard",
+        topic: "2D Arrays & Nested Search",
+        description: `A <strong>Saddle Point</strong> of a matrix is an element that is simultaneously the <strong>minimum element in its row</strong> and the <strong>maximum element in its column</strong>.<br><br>
+        Write a C program that reads an <code>R x C</code> matrix (with distinct elements) and prints the Saddle Point along with its 0-based <code>(row, col)</code> coordinates, or prints <code>No Saddle Point</code> if none exists.`,
+        inputFormat: "Line 1: R C. Next R lines: C space-separated distinct integers.",
+        outputFormat: "'Saddle Point: <val> at (<r>, <c>)' OR 'No Saddle Point'",
+        constraints: ["1 <= R, C <= 20", "All matrix entries are distinct", "No pointers allowed"],
+        testCases: [
+          { input: "3 3\n1 2 3\n4 5 6\n7 8 9", expected: "Saddle Point: 7 at (2, 0)", isSample: true },
+          { input: "3 3\n1 9 3\n8 2 6\n4 5 7", expected: "No Saddle Point", isSample: true },
+          { input: "2 3\n10 20 30\n5 15 25", expected: "Saddle Point: 10 at (0, 0)", isSample: false },
+          { input: "2 2\n4 3\n1 2", expected: "Saddle Point: 3 at (0, 1)", isSample: false }
+        ]
+      },
+      {
+        id: 19,
+        title: "Maximum Subarray Sum (Kadane's) & Equilibrium Index",
+        difficulty: "Hard",
+        topic: "1D Array Algorithms",
+        description: `Write a C program that reads an array of <code>N</code> integers and computes:<br><br>
+        1. The maximum contiguous subarray sum (using Kadane's Algorithm, at least 1 element must be chosen).<br>
+        2. The first 0-based <strong>Equilibrium Index</strong> <code>i</code> where the sum of elements strictly to the left of <code>i</code> equals the sum of elements strictly to the right of <code>i</code> (or <code>-1</code> if no such index exists).`,
+        inputFormat: "Line 1: Integer N. Line 2: N space-separated integers.",
+        outputFormat: "Line 1: 'Max Subarray Sum: <sum>'\nLine 2: 'Equilibrium Index: <idx>'",
+        constraints: ["1 <= N <= 1000", "-10^5 <= arr[i] <= 10^5", "No pointers allowed"],
+        testCases: [
+          { input: "7\n-7 1 5 2 -4 3 0", expected: "Max Subarray Sum: 7\nEquilibrium Index: 3", isSample: true },
+          { input: "4\n-5 -2 -9 -3", expected: "Max Subarray Sum: -2\nEquilibrium Index: -1", isSample: true },
+          { input: "1\n10", expected: "Max Subarray Sum: 10\nEquilibrium Index: 0", isSample: false },
+          { input: "5\n2 3 -1 8 -4", expected: "Max Subarray Sum: 12\nEquilibrium Index: -1", isSample: false }
+        ]
+      },
+      {
+        id: 20,
+        title: "Bank Account Transaction Ledger using Struct Array",
+        difficulty: "Hard",
+        topic: "Structures, Functions & State Simulation",
+        description: `Design a C program using <code>struct Account</code> (fields: <code>int id</code>, <code>char holder[30]</code>, <code>double balance</code>) stored in an array <code>struct Account acc[50]</code> (no pointers).<br><br>
+        First read <code>N</code> accounts. Then process <code>Q</code> transactions:<br>
+        • <code>1 id amount</code> — Deposit <code>amount</code> into account <code>id</code>.<br>
+        • <code>2 id amount</code> — Withdraw <code>amount</code> from account <code>id</code> ONLY if remaining balance stays <code>>= 500.00</code> (minimum balance rule).<br>
+        • <code>3 from_id to_id amount</code> — Transfer <code>amount</code> from <code>from_id</code> to <code>to_id</code> ONLY if <code>from_id</code> keeps balance <code>>= 500.00</code>.<br><br>
+        Finally, print all <code>N</code> accounts in their original input order with updated balances.`,
+        inputFormat: "Line 1: N. Next N lines: id holder balance. Next line: Q. Next Q lines: transaction queries.",
+        outputFormat: "N lines formatted as: '<id> <holder> <balance to 2 decimal places>'",
+        constraints: ["1 <= N <= 50", "1 <= Q <= 100", "Strictly NO pointers"],
+        testCases: [
+          { input: "2\n101 Rahul 2000.00\n102 Sneha 1500.00\n3\n1 101 500.00\n2 102 1200.00\n3 101 102 1000.00", expected: "101 Rahul 1500.00\n102 Sneha 2500.00", isSample: true },
+          { input: "2\n10 Amit 600.00\n20 Neha 600.00\n2\n2 10 200.00\n3 20 10 100.00", expected: "10 Amit 700.00\n20 Neha 500.00", isSample: true },
+          { input: "1\n1 Kiran 1000.00\n2\n1 1 250.50\n2 1 750.50", expected: "1 Kiran 500.00", isSample: false },
+          { input: "2\n5 A 500.00\n6 B 500.00\n1\n3 5 6 1.00", expected: "5 A 500.00\n6 B 500.00", isSample: false }
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 2. STATE MANAGEMENT & LOCAL STORAGE PERSISTENCE
+    // =========================================================================
+    const STORAGE_KEY_PREFIX = "cwap_sem1_v1_";
+    let currentProblemId = 1;
+    let currentDifficultyFilter = "ALL";
+    let editorFontSize = 13;
+    let userCodeMap = {};
+    let problemStatusMap = {};
+    let studentName = localStorage.getItem(STORAGE_KEY_PREFIX + "name") || "Student";
+    let roomCode = "";
+    let participantsData = {};
+
+    try {
+      userCodeMap = JSON.parse(localStorage.getItem(STORAGE_KEY_PREFIX + "codes") || "{}");
+      problemStatusMap = JSON.parse(localStorage.getItem(STORAGE_KEY_PREFIX + "status") || "{}");
+    } catch (e) {
+      console.warn("Local state reset:", e);
+    }
+
+    // =========================================================================
+    // 3. FIREBASE REALTIME ROOM SYNC (FOR SHARING & VIEWING FRIEND RESULTS)
+    // =========================================================================
+    let db = null;
+    let auth = null;
+    let currentUserId = localStorage.getItem(STORAGE_KEY_PREFIX + "uid") || ("usr_" + Math.random().toString(36).substring(2, 10));
+    localStorage.setItem(STORAGE_KEY_PREFIX + "uid", currentUserId);
+    let unsubscribeRoom = null;
+
+    const appId = typeof __app_id !== "undefined" ? __app_id : "cwap-sem1-studio";
+
+    function resolveInitialRoomCode() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramRoom = urlParams.get("room") || urlParams.get("session");
+      if (paramRoom && /^[A-Za-z0-9_-]{3,16}$/.test(paramRoom)) {
+        return paramRoom.toUpperCase();
+      }
+      const savedRoom = localStorage.getItem(STORAGE_KEY_PREFIX + "room");
+      if (savedRoom) return savedRoom;
+      const generated = "CW" + Math.random().toString(36).substring(2, 6).toUpperCase();
+      localStorage.setItem(STORAGE_KEY_PREFIX + "room", generated);
+      return generated;
+    }
+
+    roomCode = resolveInitialRoomCode();
+
+    async function initFirebaseSync() {
+      try {
+        if (typeof __firebase_config === "undefined") {
+          updateLocalParticipantSnapshot();
+          return;
+        }
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        if (typeof __initial_auth_token !== "undefined" && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+
+        if (auth.currentUser?.uid) {
+          currentUserId = auth.currentUser.uid;
+        }
+
+        subscribeToRoom(roomCode);
+        await pushProgressToCloud();
+      } catch (err) {
+        console.warn("Cloud sync running in local fallback mode:", err);
+        updateLocalParticipantSnapshot();
+      }
+    }
+
+    function updateLocalParticipantSnapshot() {
+      const solvedIds = Object.keys(problemStatusMap)
+        .filter((id) => problemStatusMap[id]?.status === "SOLVED")
+        .map(Number);
+
+      participantsData[currentUserId] = {
+        userId: currentUserId,
+        name: studentName || "Student",
+        solvedIds,
+        results: problemStatusMap,
+        updatedAt: Date.now()
+      };
+      renderParticipantsLeaderboard();
+    }
+
+    async function pushProgressToCloud() {
+      updateLocalParticipantSnapshot();
+      if (!db || !auth?.currentUser) return;
+
+      try {
+        const solvedIds = Object.keys(problemStatusMap)
+          .filter((id) => problemStatusMap[id]?.status === "SOLVED")
+          .map(Number);
+
+        const docRef = doc(db, "artifacts", appId, "public", "data", `room_${roomCode}`, currentUserId);
+        await setDoc(docRef, {
+          userId: currentUserId,
+          name: studentName || "Student",
+          solvedIds,
+          results: JSON.stringify(problemStatusMap),
+          updatedAt: Date.now()
+        }, { merge: true });
+      } catch (err) {
+        console.warn("Error syncing progress:", err);
+      }
+    }
+
+    function subscribeToRoom(targetRoom) {
+      roomCode = targetRoom.toUpperCase();
+      localStorage.setItem(STORAGE_KEY_PREFIX + "room", roomCode);
+      document.getElementById("roomCodeDisplay").textContent = roomCode;
+      document.getElementById("modalRoomCode").textContent = roomCode;
+
+      const url = new URL(window.location.href);
+      url.searchParams.set("room", roomCode);
+      window.history.replaceState({}, "", url.toString());
+
+      if (unsubscribeRoom) {
+        unsubscribeRoom();
+        unsubscribeRoom = null;
+      }
+
+      participantsData = {};
+      updateLocalParticipantSnapshot();
+
+      if (!db || !auth?.currentUser) return;
+
+      const colRef = collection(db, "artifacts", appId, "public", "data", `room_${roomCode}`);
+      unsubscribeRoom = onSnapshot(
+        colRef,
+        (snapshot) => {
+          const freshMap = {};
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            let parsedResults = {};
+            try {
+              parsedResults = typeof data.results === "string" ? JSON.parse(data.results) : (data.results || {});
+            } catch (_) {
+              parsedResults = {};
+            }
+            freshMap[docSnap.id] = {
+              userId: docSnap.id,
+              name: data.name || "Participant",
+              solvedIds: Array.isArray(data.solvedIds) ? data.solvedIds : [],
+              results: parsedResults,
+              updatedAt: data.updatedAt || Date.now()
+            };
+          });
+          if (!freshMap[currentUserId]) {
+            updateLocalParticipantSnapshot();
+          } else {
+            participantsData = freshMap;
+            renderParticipantsLeaderboard();
+          }
+        },
+        (error) => {
+          console.warn("Room listener error:", error);
+        }
+      );
+    }
+
+    // =========================================================================
+    // 4. REAL C COMPILER EXECUTION ENGINE (WANDBOX GCC + PISTON MIRROR)
+    // =========================================================================
+    function checkPointerViolation(cSource) {
+      const stripped = cSource
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .replace(/\/\/.*$/gm, "")
+        .replace(/"(?:\\.|[^"\\])*"/g, '""')
+        .replace(/'(?:\\.|[^'\\])'/g, "''");
+
+      const pointerDeclRegex = /\b(?:int|char|float|double|long|short|void|struct\s+\w+)\s*\*+\s*[a-zA-Z_]\w*/;
+      const arrowOpRegex = /->/;
+      const heapAllocRegex = /\b(?:malloc|calloc|realloc|free)\s*\(/;
+
+      if (pointerDeclRegex.test(stripped) || arrowOpRegex.test(stripped) || heapAllocRegex.test(stripped)) {
+        return "Syllabus Rule Violation: Pointers (*, ->, malloc/free) are strictly prohibited in this Sem 1 practice suite. Use array indexing (arr[i]) and struct values instead.";
+      }
+      return null;
+    }
+
+    async function compileAndRunC(sourceCode, stdinText) {
+      const pointerError = checkPointerViolation(sourceCode);
+      if (pointerError) {
+        return {
+          success: false,
+          compileError: pointerError,
+          stdout: "",
+          stderr: "",
+          timeMs: 0,
+          engine: "Syllabus Guard"
+        };
+      }
+
+      const startTime = performance.now();
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 9500);
+
+        const response = await fetch("https://wandbox.org/api/compile.json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            compiler: "gcc-head",
+            code: sourceCode,
+            stdin: stdinText,
+            options: "warning,c17",
+            "compiler-option-raw": "-lm"
+          })
+        });
+
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          const data = await response.json();
+          const elapsed = Math.round(performance.now() - startTime);
+
+          if (data.compiler_error && data.compiler_error.trim().length > 0) {
+            return {
+              success: false,
+              compileError: data.compiler_error.trim(),
+              stdout: data.program_output || "",
+              stderr: data.program_error || "",
+              timeMs: elapsed,
+              engine: "GCC (Live)"
+            };
+          }
+
+          if (data.status !== "0" && data.program_error) {
+            return {
+              success: false,
+              compileError: `Runtime Error (Exit Code ${data.status}):\n${data.program_error}`,
+              stdout: data.program_output || "",
+              stderr: data.program_error || "",
+              timeMs: elapsed,
+              engine: "GCC (Live)"
+            };
+          }
+
+          return {
+            success: true,
+            compileError: null,
+            stdout: data.program_output || "",
+            stderr: data.program_error || "",
+            timeMs: elapsed,
+            engine: "GCC (Live)"
+          };
+        }
+      } catch (apiErr) {
+        console.warn("Primary GCC API unavailable, trying Piston mirror...", apiErr);
+      }
+
+      try {
+        const controller2 = new AbortController();
+        const timeoutId2 = setTimeout(() => controller2.abort(), 8000);
+
+        const res2 = await fetch("https://emkc.org/api/v2/piston/execute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller2.signal,
+          body: JSON.stringify({
+            language: "c",
+            version: "10.2.0",
+            files: [{ name: "main.c", content: sourceCode }],
+            stdin: stdinText
+          })
+        });
+
+        clearTimeout(timeoutId2);
+
+        if (res2.ok) {
+          const data2 = await res2.json();
+          const elapsed = Math.round(performance.now() - startTime);
+          if (data2.compile && data2.compile.code !== 0) {
+            return {
+              success: false,
+              compileError: data2.compile.stderr || data2.compile.output || "Compilation Failed",
+              stdout: "",
+              stderr: "",
+              timeMs: elapsed,
+              engine: "GCC 10.2"
+            };
+          }
+          if (data2.run && data2.run.code !== 0 && data2.run.stderr) {
+            return {
+              success: false,
+              compileError: `Runtime Error:\n${data2.run.stderr}`,
+              stdout: data2.run.stdout || "",
+              stderr: data2.run.stderr || "",
+              timeMs: elapsed,
+              engine: "GCC 10.2"
+            };
+          }
+          return {
+            success: true,
+            compileError: null,
+            stdout: data2.run?.stdout || "",
+            stderr: data2.run?.stderr || "",
+            timeMs: elapsed,
+            engine: "GCC 10.2"
+          };
+        }
+      } catch (pistonErr) {
+        console.warn("Secondary compiler mirror unavailable:", pistonErr);
+      }
+
+      return {
+        success: false,
+        compileError: "Compiler Service Unreachable: Please check your internet connection so GCC can compile your C source code.",
+        stdout: "",
+        stderr: "",
+        timeMs: Math.round(performance.now() - startTime),
+        engine: "Offline"
+      };
+    }
+
+    function normalizeOutput(str) {
+      return (str || "")
+        .replace(/\r\n/g, "\n")
+        .split("\n")
+        .map((line) => line.replace(/[ \t]+$/g, ""))
+        .join("\n")
+        .trim();
+    }
+
+    // =========================================================================
+    // 5. UI RENDERING (BENTO CURRICULUM + WORKBENCH + INTERACTIONS)
+    // =========================================================================
+    const codeEditor = document.getElementById("codeEditor");
+    const lineNumbers = document.getElementById("lineNumbers");
+
+    function updateLineNumbers() {
+      const lines = codeEditor.value.split("\n").length;
+      let html = "";
+      for (let i = 1; i <= lines; i++) {
+        html += i + "\n";
+      }
+      lineNumbers.textContent = html;
+    }
+
+    codeEditor.addEventListener("input", () => {
+      updateLineNumbers();
+      userCodeMap[currentProblemId] = codeEditor.value;
+      localStorage.setItem(STORAGE_KEY_PREFIX + "codes", JSON.stringify(userCodeMap));
+    });
+
+    codeEditor.addEventListener("scroll", () => {
+      lineNumbers.scrollTop = codeEditor.scrollTop;
+    });
+
+    codeEditor.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const start = codeEditor.selectionStart;
+        const end = codeEditor.selectionEnd;
+        codeEditor.value = codeEditor.value.substring(0, start) + "    " + codeEditor.value.substring(end);
+        codeEditor.selectionStart = codeEditor.selectionEnd = start + 4;
+        codeEditor.dispatchEvent(new Event("input"));
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        runAllTestCases();
+      }
+    });
+
+    function showToast(msg, type = "success") {
+      const banner = document.getElementById("toastBanner");
+      const dot = document.getElementById("toastDot");
+      const text = document.getElementById("toastMessage");
+      text.textContent = msg;
+      dot.className = `w-2 h-2 rounded-full ${type === "error" ? "bg-[#EF4444]" : type === "info" ? "bg-amber-400" : "bg-[#10B981]"}`;
+      banner.classList.remove("hidden");
+      if (typeof gsap !== "undefined") {
+        gsap.fromTo(banner, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" });
+      }
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        banner.classList.add("hidden");
+      }, 3000);
+    }
+
+    function renderCurriculumBento() {
+      const grid = document.getElementById("curriculumBentoGrid");
+      grid.innerHTML = "";
+
+      PROBLEMS.forEach((p) => {
+        const st = problemStatusMap[p.id]?.status || "UNSOLVED";
+        const isSolved = st === "SOLVED";
+        const isAttempted = st === "ATTEMPTED";
+
+        let diffChip = "bg-[#10B981]/10 text-[#10B981] border-[#10B981]/25";
+        if (p.difficulty === "Medium") diffChip = "bg-amber-400/10 text-amber-400 border-amber-400/25";
+        if (p.difficulty === "Hard") diffChip = "bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/25";
+
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = `bento-wap-card apple-card rounded-2xl p-4 sm:p-5 text-left flex flex-col justify-between gap-4 group cursor-pointer ${
+          isSolved ? "border-[#10B981]/35" : ""
+        }`;
+
+        card.innerHTML = `
+          <div class="space-y-2.5 w-full">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-xs font-semibold text-[#71717A] group-hover:text-amber-400 transition-colors tabular-nums">
+                WAP #${String(p.id).padStart(2, "0")}
+              </span>
+              <div class="flex items-center gap-1.5">
+                ${
+                  isSolved
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">Solved ✓</span>'
+                    : isAttempted
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#EF4444]/15 text-[#EF4444] border border-[#EF4444]/30">Attempted</span>'
+                    : ""
+                }
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-medium border ${diffChip}">${p.difficulty}</span>
+              </div>
+            </div>
+            <h3 class="text-sm font-semibold text-[#F5F5F7] leading-snug group-hover:text-white">
+              ${escapeHtml(p.title)}
+            </h3>
+          </div>
+
+          <div class="pt-2 border-t border-white/[0.05] w-full flex items-center justify-between text-[11px] text-[#71717A]">
+            <span class="truncate max-w-[180px]">${escapeHtml(p.topic)}</span>
+            <span class="text-[#A1A1AA] group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all font-medium">Solve →</span>
+          </div>
+        `;
+
+        card.addEventListener("click", () => {
+          selectProblem(p.id, true);
+          smoothScrollToTarget("#workbenchSection");
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    function renderQuestionGridAndDropdown() {
+      const grid = document.getElementById("questionNumberGrid");
+      const dropdown = document.getElementById("problemDropdown");
+      grid.innerHTML = "";
+      dropdown.innerHTML = "";
+
+      const filtered = PROBLEMS.filter((p) => currentDifficultyFilter === "ALL" || p.difficulty === currentDifficultyFilter);
+
+      filtered.forEach((p) => {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        const statusMark = problemStatusMap[p.id]?.status === "SOLVED" ? "✓ " : "";
+        opt.textContent = `${statusMark}${p.id}. ${p.title} (${p.difficulty})`;
+        if (p.id === currentProblemId) opt.selected = true;
+        dropdown.appendChild(opt);
+      });
+
+      PROBLEMS.forEach((p) => {
+        const st = problemStatusMap[p.id]?.status || "UNSOLVED";
+        const isCurrent = p.id === currentProblemId;
+        const isDimmed = currentDifficultyFilter !== "ALL" && p.difficulty !== currentDifficultyFilter;
+
+        const btn = document.createElement("button");
+        btn.textContent = p.id;
+        btn.title = `#${p.id}: ${p.title} [${p.difficulty}]`;
+
+        let baseClasses = "h-6 rounded-full font-mono text-[11px] font-medium transition-all flex items-center justify-center border tabular-nums ";
+        if (isCurrent) {
+          baseClasses += "bg-[#F5F5F7] text-[#09090B] border-[#F5F5F7] font-bold shadow-sm ";
+        } else if (st === "SOLVED") {
+          baseClasses += "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/40 hover:bg-[#10B981]/25 ";
+        } else if (st === "ATTEMPTED") {
+          baseClasses += "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/40 hover:bg-[#EF4444]/25 ";
+        } else {
+          baseClasses += "bg-[#09090B] text-[#A1A1AA] border-white/[0.07] hover:border-white/20 hover:text-[#F5F5F7] ";
+        }
+        if (isDimmed) baseClasses += "opacity-30 ";
+
+        btn.className = baseClasses;
+        btn.addEventListener("click", () => selectProblem(p.id, true));
+        grid.appendChild(btn);
+      });
+
+      const solvedCount = Object.values(problemStatusMap).filter((s) => s.status === "SOLVED").length;
+      document.getElementById("headerSolvedCount").textContent = `${solvedCount} / ${PROBLEMS.length}`;
+      renderCurriculumBento();
+    }
+
+    function selectProblem(id, animateTransition = false) {
+      currentProblemId = id;
+      const prob = PROBLEMS.find((p) => p.id === id) || PROBLEMS[0];
+
+      document.getElementById("workbenchProgressText").textContent = `Active Question: #${String(prob.id).padStart(2, "0")} of 20`;
+      document.getElementById("probNumberBadge").textContent = `WAP #${String(prob.id).padStart(2, "0")}`;
+      document.getElementById("probTitle").textContent = prob.title;
+      document.getElementById("probTopicBadge").textContent = prob.topic;
+
+      const diffBadge = document.getElementById("probDifficultyBadge");
+      diffBadge.textContent = prob.difficulty;
+      if (prob.difficulty === "Easy") {
+        diffBadge.className = "text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/25";
+      } else if (prob.difficulty === "Medium") {
+        diffBadge.className = "text-xs font-medium px-2.5 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/25";
+      } else {
+        diffBadge.className = "text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/25";
+      }
+
+      const st = problemStatusMap[prob.id]?.status || "UNSOLVED";
+      const statusBadge = document.getElementById("probStatusBadge");
+      statusBadge.textContent = st;
+      if (st === "SOLVED") {
+        statusBadge.className = "text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30";
+      } else if (st === "ATTEMPTED") {
+        statusBadge.className = "text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-[#EF4444]/15 text-[#EF4444] border border-[#EF4444]/30";
+      } else {
+        statusBadge.className = "text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/[0.04] text-[#71717A] border border-white/[0.06]";
+      }
+
+      document.getElementById("probDescription").innerHTML = prob.description;
+      document.getElementById("probInputFormat").textContent = prob.inputFormat;
+      document.getElementById("probOutputFormat").textContent = prob.outputFormat;
+
+      const constraintsUl = document.getElementById("probConstraints");
+      constraintsUl.innerHTML = "";
+      prob.constraints.forEach((c) => {
+        const li = document.createElement("li");
+        li.textContent = c;
+        constraintsUl.appendChild(li);
+      });
+
+      const samplesDiv = document.getElementById("sampleCasesContainer");
+      samplesDiv.innerHTML = "";
+      prob.testCases
+        .filter((tc) => tc.isSample)
+        .forEach((tc, idx) => {
+          const card = document.createElement("div");
+          card.className = "bg-[#131317] border border-white/[0.065] rounded-2xl p-3.5 space-y-2.5";
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono font-semibold text-[#A1A1AA]">Sample Case ${idx + 1}</span>
+              <button class="use-sample-btn text-[11px] text-amber-400 hover:underline" data-sample-idx="${idx}">Test in Custom Stdin</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <div class="text-[10px] uppercase tracking-widest text-[#71717A] mb-1">Input</div>
+                <pre class="bg-[#09090B] border border-white/[0.06] rounded-xl p-2.5 font-mono text-xs text-[#F5F5F7] overflow-x-auto">${escapeHtml(tc.input)}</pre>
+              </div>
+              <div>
+                <div class="text-[10px] uppercase tracking-widest text-[#71717A] mb-1">Expected Output</div>
+                <pre class="bg-[#09090B] border border-white/[0.06] rounded-xl p-2.5 font-mono text-xs text-[#10B981] overflow-x-auto">${escapeHtml(tc.expected)}</pre>
+              </div>
+            </div>
+          `;
+          samplesDiv.appendChild(card);
+        });
+
+      document.querySelectorAll(".use-sample-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const sIdx = Number(btn.getAttribute("data-sample-idx"));
+          const sample = prob.testCases.filter((tc) => tc.isSample)[sIdx];
+          if (sample) {
+            document.getElementById("customStdinInput").value = sample.input;
+            switchConsoleTab("custom");
+            showToast("Sample input loaded into Stdin", "info");
+          }
+        });
+      });
+
+      codeEditor.value = userCodeMap[prob.id] !== undefined ? userCodeMap[prob.id] : STARTER_CODE;
+      updateLineNumbers();
+
+      document.getElementById("customStdinInput").value = prob.testCases[0]?.input || "";
+      document.getElementById("customStdoutOutput").textContent = "Run your code to view stdout or compiler errors here.";
+      document.getElementById("customRunStatus").textContent = "Idle";
+
+      renderIdleTestCaseCards(prob);
+      renderQuestionGridAndDropdown();
+
+      if (animateTransition && typeof gsap !== "undefined") {
+        gsap.fromTo(
+          "#problemContentAnimate",
+          { opacity: 0.35, y: 8 },
+          { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
+        );
+      }
+    }
+
+    function renderIdleTestCaseCards(prob) {
+      const banner = document.getElementById("judgeSummaryBanner");
+      banner.className = "bg-[#09090B] border border-white/[0.065] rounded-2xl p-3 flex items-center justify-between";
+      banner.innerHTML = `
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#383842]"></span>
+          <span class="text-xs text-[#A1A1AA]">Click <strong class="text-[#F5F5F7]">Submit &amp; Judge</strong> to compile and run ${prob.testCases.length} test cases.</span>
+        </div>
+        <span class="text-[11px] font-mono text-[#71717A] tabular-nums">0 / ${prob.testCases.length} Passed</span>
+      `;
+
+      const list = document.getElementById("testCaseResultsList");
+      list.innerHTML = "";
+      prob.testCases.forEach((tc, idx) => {
+        const card = document.createElement("div");
+        card.className = "bg-[#09090B] border border-white/[0.065] rounded-2xl p-3 flex items-center justify-between";
+        card.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[#383842]"></span>
+            <span class="text-xs font-mono text-[#D4D4D8] tabular-nums">Case #${idx + 1}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.04] text-[#71717A]">${tc.isSample ? "Sample" : "Hidden"}</span>
+          </div>
+          <span class="text-[11px] font-mono text-[#71717A]">Pending</span>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function switchConsoleTab(tab) {
+      const judgePanel = document.getElementById("judgePanel");
+      const customPanel = document.getElementById("customPanel");
+      const tabJudgeBtn = document.getElementById("tabJudgeBtn");
+      const tabCustomBtn = document.getElementById("tabCustomBtn");
+
+      if (tab === "judge") {
+        judgePanel.classList.remove("hidden");
+        customPanel.classList.add("hidden");
+        tabJudgeBtn.className = "console-tab px-3 py-1 rounded-full text-xs font-medium bg-white/[0.1] text-[#F5F5F7]";
+        tabCustomBtn.className = "console-tab px-3 py-1 rounded-full text-xs font-medium text-[#A1A1AA] hover:text-[#F5F5F7]";
+      } else {
+        judgePanel.classList.add("hidden");
+        customPanel.classList.remove("hidden");
+        tabCustomBtn.className = "console-tab px-3 py-1 rounded-full text-xs font-medium bg-white/[0.1] text-[#F5F5F7]";
+        tabJudgeBtn.className = "console-tab px-3 py-1 rounded-full text-xs font-medium text-[#A1A1AA] hover:text-[#F5F5F7]";
+      }
+    }
+
+    // =========================================================================
+    // 6. RUN CUSTOM INPUT & AUTOMATED TEST SUITE JUDGE
+    // =========================================================================
+    let isExecuting = false;
+
+    async function runCustomCode() {
+      if (isExecuting) return;
+      isExecuting = true;
+      switchConsoleTab("custom");
+
+      const runBtn = document.getElementById("runCustomBtn");
+      const statusEl = document.getElementById("customRunStatus");
+      const outEl = document.getElementById("customStdoutOutput");
+      const metaEl = document.getElementById("executionMeta");
+
+      runBtn.disabled = true;
+      runBtn.classList.add("opacity-60");
+      statusEl.textContent = "Compiling...";
+      statusEl.className = "text-[11px] font-mono text-amber-400 animate-pulse-subtle";
+      outEl.textContent = "Compiling with GCC...";
+      outEl.className = "flex-1 w-full bg-[#09090B] border border-white/[0.07] rounded-2xl p-3 font-mono text-xs text-[#A1A1AA] overflow-auto whitespace-pre-wrap";
+
+      const source = codeEditor.value;
+      const stdin = document.getElementById("customStdinInput").value;
+      const result = await compileAndRunC(source, stdin);
+
+      if (!result.success) {
+        statusEl.textContent = "Compilation / Runtime Error";
+        statusEl.className = "text-[11px] font-mono text-[#EF4444]";
+        outEl.textContent = result.compileError;
+        outEl.className = "flex-1 w-full bg-[#09090B] border border-[#EF4444]/40 rounded-2xl p-3 font-mono text-xs text-[#EF4444] overflow-auto whitespace-pre-wrap";
+      } else {
+        statusEl.textContent = `Exit 0 • ${result.timeMs}ms`;
+        statusEl.className = "text-[11px] font-mono text-[#10B981] tabular-nums";
+        outEl.textContent = result.stdout.length > 0 ? result.stdout : "(Program exited cleanly with empty stdout)";
+        outEl.className = "flex-1 w-full bg-[#09090B] border border-[#10B981]/30 rounded-2xl p-3 font-mono text-xs text-[#F5F5F7] overflow-auto whitespace-pre-wrap";
+      }
+
+      metaEl.textContent = `${result.engine} • ${result.timeMs}ms`;
+      runBtn.disabled = false;
+      runBtn.classList.remove("opacity-60");
+      isExecuting = false;
+    }
+
+    async function runAllTestCases() {
+      if (isExecuting) return;
+      isExecuting = true;
+      switchConsoleTab("judge");
+
+      const prob = PROBLEMS.find((p) => p.id === currentProblemId);
+      const submitBtn = document.getElementById("submitJudgeBtn");
+      const banner = document.getElementById("judgeSummaryBanner");
+      const list = document.getElementById("testCaseResultsList");
+      const metaEl = document.getElementById("executionMeta");
+
+      submitBtn.disabled = true;
+      submitBtn.classList.add("opacity-60");
+
+      banner.className = "bg-[#09090B] border border-amber-400/40 rounded-2xl p-3 flex items-center justify-between";
+      banner.innerHTML = `
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+          <span class="text-xs text-[#F5F5F7]">Compiling &amp; judging ${prob.testCases.length} test cases on GCC...</span>
+        </div>
+        <span class="text-[11px] font-mono text-amber-400">Running...</span>
+      `;
+
+      const source = codeEditor.value;
+      let passedCount = 0;
+      let totalTime = 0;
+      let compilationFailedError = null;
+      const caseOutcomes = [];
+
+      for (let i = 0; i < prob.testCases.length; i++) {
+        const tc = prob.testCases[i];
+        const res = await compileAndRunC(source, tc.input);
+        totalTime += res.timeMs;
+
+        if (!res.success) {
+          compilationFailedError = res.compileError;
+          break;
+        }
+
+        const actualNorm = normalizeOutput(res.stdout);
+        const expectedNorm = normalizeOutput(tc.expected);
+        const passed = actualNorm === expectedNorm;
+        if (passed) passedCount++;
+
+        caseOutcomes.push({
+          index: i + 1,
+          isSample: tc.isSample,
+          passed,
+          input: tc.input,
+          expected: expectedNorm,
+          actual: actualNorm,
+          timeMs: res.timeMs
+        });
+      }
+
+      const prevSolved = problemStatusMap[prob.id]?.status === "SOLVED";
+      if (compilationFailedError) {
+        if (!prevSolved) {
+          problemStatusMap[prob.id] = {
+            status: "ATTEMPTED",
+            passed: 0,
+            total: prob.testCases.length,
+            updatedAt: Date.now()
+          };
+        }
+      } else {
+        const allPassed = passedCount === prob.testCases.length;
+        problemStatusMap[prob.id] = {
+          status: allPassed || prevSolved ? "SOLVED" : "ATTEMPTED",
+          passed: Math.max(passedCount, problemStatusMap[prob.id]?.passed || 0),
+          total: prob.testCases.length,
+          updatedAt: Date.now()
+        };
+      }
+
+      localStorage.setItem(STORAGE_KEY_PREFIX + "status", JSON.stringify(problemStatusMap));
+      renderQuestionGridAndDropdown();
+
+      // Update status badge on problem header
+      const st = problemStatusMap[prob.id]?.status || "UNSOLVED";
+      const statusBadge = document.getElementById("probStatusBadge");
+      statusBadge.textContent = st;
+      if (st === "SOLVED") {
+        statusBadge.className = "text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30";
+      } else if (st === "ATTEMPTED") {
+        statusBadge.className = "text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-[#EF4444]/15 text-[#EF4444] border border-[#EF4444]/30";
+      }
+
+      list.innerHTML = "";
+
+      if (compilationFailedError) {
+        banner.className = "bg-[#EF4444]/10 border border-[#EF4444]/40 rounded-2xl p-3 flex items-center justify-between";
+        banner.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span>
+            <span class="text-xs font-semibold text-[#EF4444]">Compilation / Execution Failed</span>
+          </div>
+          <span class="text-[11px] font-mono text-[#EF4444] tabular-nums">0 / ${prob.testCases.length} Passed</span>
+        `;
+
+        const errBox = document.createElement("div");
+        errBox.className = "sm:col-span-2 bg-[#09090B] border border-[#EF4444]/40 rounded-2xl p-3.5 font-mono text-xs text-[#EF4444] whitespace-pre-wrap overflow-x-auto";
+        errBox.textContent = compilationFailedError;
+        list.appendChild(errBox);
+
+        showToast("Compilation or rule check failed", "error");
+      } else {
+        const allPassed = passedCount === prob.testCases.length;
+        banner.className = allPassed
+          ? "bg-[#10B981]/10 border border-[#10B981]/40 rounded-2xl p-3 flex items-center justify-between"
+          : "bg-[#EF4444]/10 border border-[#EF4444]/40 rounded-2xl p-3 flex items-center justify-between";
+
+        banner.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="w-2.5 h-2.5 rounded-full ${allPassed ? "bg-[#10B981]" : "bg-[#EF4444]"}"></span>
+            <span class="text-xs font-semibold ${allPassed ? "text-[#10B981]" : "text-[#EF4444]"}">
+              ${allPassed ? "Accepted — All Test Cases Passed!" : "Wrong Answer on One or More Test Cases"}
+            </span>
+          </div>
+          <span class="text-[11px] font-mono font-semibold ${allPassed ? "text-[#10B981]" : "text-[#EF4444]"} tabular-nums">
+            ${passedCount} / ${prob.testCases.length} Passed
+          </span>
+        `;
+
+        caseOutcomes.forEach((c) => {
+          const card = document.createElement("div");
+          card.className = `bg-[#09090B] border ${c.passed ? "border-[#10B981]/35" : "border-[#EF4444]/40"} rounded-2xl p-3 space-y-2`;
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full ${c.passed ? "bg-[#10B981]" : "bg-[#EF4444]"}"></span>
+                <span class="text-xs font-mono font-semibold text-[#F5F5F7] tabular-nums">Case #${c.index}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.04] text-[#71717A]">${c.isSample ? "Sample" : "Hidden"}</span>
+              </div>
+              <span class="text-[11px] font-mono font-semibold ${c.passed ? "text-[#10B981]" : "text-[#EF4444]"} tabular-nums">
+                ${c.passed ? "PASS" : "FAIL"} (${c.timeMs}ms)
+              </span>
+            </div>
+            ${
+              !c.passed
+                ? `<div class="grid grid-cols-1 gap-1.5 pt-1 text-[11px] font-mono">
+                    <div class="text-[#71717A]">Input: <span class="text-[#D4D4D8]">${escapeHtml(c.input.replace(/\n/g, " ↵ "))}</span></div>
+                    <div class="text-[#71717A]">Expected: <span class="text-[#10B981]">${escapeHtml(c.expected.replace(/\n/g, " ↵ "))}</span></div>
+                    <div class="text-[#71717A]">Actual: <span class="text-[#EF4444]">${escapeHtml((c.actual || "<empty>").replace(/\n/g, " ↵ "))}</span></div>
+                  </div>`
+                : ""
+            }
+          `;
+          list.appendChild(card);
+        });
+
+        if (allPassed) {
+          showToast(`WAP #${prob.id} Solved! Synced to Room ${roomCode}`, "success");
+        } else {
+          showToast(`${passedCount}/${prob.testCases.length} test cases passed`, "error");
+        }
+      }
+
+      metaEl.textContent = `Judged in ${totalTime}ms`;
+      await pushProgressToCloud();
+
+      submitBtn.disabled = false;
+      submitBtn.classList.remove("opacity-60");
+      isExecuting = false;
+    }
+
+    // =========================================================================
+    // 7. LEADERBOARD & FRIEND RESULT VIEWER RENDERER
+    // =========================================================================
+    function renderParticipantsLeaderboard() {
+      const container = document.getElementById("participantsList");
+      const badge = document.getElementById("participantCountBadge");
+      const list = Object.values(participantsData).sort((a, b) => {
+        const diff = (b.solvedIds?.length || 0) - (a.solvedIds?.length || 0);
+        if (diff !== 0) return diff;
+        return (a.updatedAt || 0) - (b.updatedAt || 0);
+      });
+
+      badge.textContent = list.length;
+      container.innerHTML = "";
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="text-xs text-[#71717A] text-center py-6">No participants in this room yet.</div>`;
+        return;
+      }
+
+      list.forEach((user, rankIdx) => {
+        const isMe = user.userId === currentUserId;
+        const solvedSet = new Set(user.solvedIds || []);
+        const score = solvedSet.size;
+        const pct = Math.round((score / PROBLEMS.length) * 100);
+
+        let pillsHtml = "";
+        for (let q = 1; q <= PROBLEMS.length; q++) {
+          const resObj = user.results?.[q];
+          const isSolved = solvedSet.has(q) || resObj?.status === "SOLVED";
+          const isAttempted = !isSolved && resObj?.status === "ATTEMPTED";
+          const cls = isSolved
+            ? "bg-[#10B981]/20 text-[#10B981] border-[#10B981]/40"
+            : isAttempted
+            ? "bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/40"
+            : "bg-[#111114] text-[#52525B] border-white/[0.06]";
+          pillsHtml += `<span title="WAP #${q}: ${isSolved ? "Solved" : isAttempted ? "Attempted" : "Pending"}" class="w-6 h-6 rounded-full text-[10px] font-mono flex items-center justify-center border tabular-nums ${cls}">${q}</span>`;
+        }
+
+        const card = document.createElement("div");
+        card.className = `bg-[#09090B] border ${isMe ? "border-amber-400/45" : "border-white/[0.07]"} rounded-2xl p-4 space-y-3`;
+        card.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+              <span class="w-7 h-7 rounded-full bg-white/[0.05] border border-white/10 font-mono text-xs font-bold flex items-center justify-center text-[#F5F5F7] tabular-nums">#${rankIdx + 1}</span>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-semibold text-[#F5F5F7]">${escapeHtml(user.name)}</span>
+                  ${isMe ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/15 text-amber-400 font-medium">You</span>' : ""}
+                </div>
+                <div class="text-[11px] text-[#71717A] tabular-nums">Completion: ${pct}% (${score} of 20 WAPs solved)</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-mono text-base font-bold text-[#10B981] tabular-nums">${score} / 20</div>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
+            <div class="h-full bg-[#10B981] transition-all duration-300" style="width: ${pct}%"></div>
+          </div>
+
+          <!-- 20-Question Status Matrix -->
+          <div>
+            <div class="text-[10px] uppercase tracking-widest text-[#71717A] mb-1.5">Question-by-Question Status (1–20)</div>
+            <div class="flex flex-wrap gap-1.5">
+              ${pillsHtml}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function copyShareLink() {
+      const shareUrl = `${window.location.origin}${window.location.pathname}?room=${roomCode}`;
+      const tempInput = document.createElement("input");
+      tempInput.value = shareUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      showToast(`Invite link copied! Room: ${roomCode}`, "success");
+    }
+
+    // =========================================================================
+    // 8. EVENT LISTENERS & INITIALIZATION
+    // =========================================================================
+    document.getElementById("studentNameInput").value = studentName;
+    document.getElementById("studentNameInput").addEventListener("change", (e) => {
+      studentName = e.target.value.trim() || "Student";
+      e.target.value = studentName;
+      localStorage.setItem(STORAGE_KEY_PREFIX + "name", studentName);
+      pushProgressToCloud();
+      showToast(`Name updated to ${studentName}`, "info");
+    });
+
+    // Smooth Scroll Navigation Handlers
+    document.getElementById("heroStartBtn").addEventListener("click", () => {
+      smoothScrollToTarget("#workbenchSection");
+    });
+    document.getElementById("heroBrowseCurriculumBtn").addEventListener("click", () => {
+      smoothScrollToTarget("#curriculumSection");
+    });
+    document.getElementById("brandHomeLink").addEventListener("click", (e) => {
+      e.preventDefault();
+      smoothScrollToTarget("#heroSection");
+    });
+    document.querySelectorAll(".nav-jump-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-scroll-target");
+        document.querySelectorAll(".nav-jump-btn").forEach((b) => {
+          b.className = "nav-jump-btn px-3.5 py-1 rounded-full text-[#A1A1AA] hover:text-[#F5F5F7] hover:bg-white/[0.06] transition-all";
+        });
+        btn.className = "nav-jump-btn px-3.5 py-1 rounded-full text-[#F5F5F7] bg-white/[0.08] font-medium transition-all";
+        smoothScrollToTarget(target);
+      });
+    });
+
+    document.getElementById("problemDropdown").addEventListener("change", (e) => {
+      selectProblem(Number(e.target.value), true);
+    });
+
+    document.getElementById("prevProblemBtn").addEventListener("click", () => {
+      const prevId = currentProblemId > 1 ? currentProblemId - 1 : PROBLEMS.length;
+      selectProblem(prevId, true);
+    });
+
+    document.getElementById("nextProblemBtn").addEventListener("click", () => {
+      const nextId = currentProblemId < PROBLEMS.length ? currentProblemId + 1 : 1;
+      selectProblem(nextId, true);
+    });
+
+    document.querySelectorAll(".diff-filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        currentDifficultyFilter = btn.getAttribute("data-diff");
+        document.querySelectorAll(".diff-filter-btn").forEach((b) => {
+          b.className = "diff-filter-btn px-2 py-1 rounded-full text-[#A1A1AA] hover:text-[#F5F5F7]";
+        });
+        btn.className = "diff-filter-btn px-2.5 py-1 rounded-full bg-white/[0.1] text-[#F5F5F7] font-medium";
+        renderQuestionGridAndDropdown();
+      });
+    });
+
+    document.getElementById("fontIncBtn").addEventListener("click", () => {
+      editorFontSize = Math.min(20, editorFontSize + 1);
+      codeEditor.style.fontSize = `${editorFontSize}px`;
+      lineNumbers.style.fontSize = `${editorFontSize}px`;
+    });
+
+    document.getElementById("fontDecBtn").addEventListener("click", () => {
+      editorFontSize = Math.max(11, editorFontSize - 1);
+      codeEditor.style.fontSize = `${editorFontSize}px`;
+      lineNumbers.style.fontSize = `${editorFontSize}px`;
+    });
+
+    document.getElementById("runCustomBtn").addEventListener("click", runCustomCode);
+    document.getElementById("submitJudgeBtn").addEventListener("click", runAllTestCases);
+
+    document.getElementById("tabJudgeBtn").addEventListener("click", () => switchConsoleTab("judge"));
+    document.getElementById("tabCustomBtn").addEventListener("click", () => switchConsoleTab("custom"));
+
+    document.getElementById("loadSampleStdinBtn").addEventListener("click", () => {
+      const prob = PROBLEMS.find((p) => p.id === currentProblemId);
+      if (prob?.testCases[0]) {
+        document.getElementById("customStdinInput").value = prob.testCases[0].input;
+      }
+    });
+
+    // Reset Modal handlers
+    document.getElementById("resetCodeBtn").addEventListener("click", () => {
+      document.getElementById("resetModal").classList.remove("hidden");
+    });
+    document.getElementById("cancelResetBtn").addEventListener("click", () => {
+      document.getElementById("resetModal").classList.add("hidden");
+    });
+    document.getElementById("confirmResetBtn").addEventListener("click", () => {
+      codeEditor.value = STARTER_CODE;
+      userCodeMap[currentProblemId] = STARTER_CODE;
+      localStorage.setItem(STORAGE_KEY_PREFIX + "codes", JSON.stringify(userCodeMap));
+      updateLineNumbers();
+      document.getElementById("resetModal").classList.add("hidden");
+      showToast("Editor reset to minimal C template", "info");
+    });
+
+    // Share & Results Modal handlers
+    document.getElementById("shareSessionBtn").addEventListener("click", copyShareLink);
+    document.getElementById("copyShareUrlModalBtn").addEventListener("click", copyShareLink);
+
+    document.getElementById("openResultsModalBtn").addEventListener("click", () => {
+      renderParticipantsLeaderboard();
+      document.getElementById("resultsModal").classList.remove("hidden");
+    });
+    document.getElementById("closeResultsModalBtn").addEventListener("click", () => {
+      document.getElementById("resultsModal").classList.add("hidden");
+    });
+
+    document.getElementById("createNewRoomBtn").addEventListener("click", async () => {
+      const newCode = "CW" + Math.random().toString(36).substring(2, 6).toUpperCase();
+      subscribeToRoom(newCode);
+      await pushProgressToCloud();
+      showToast(`Created new room: ${newCode}`, "success");
+    });
+
+    // Join Room Modal handlers
+    document.getElementById("joinRoomBtn").addEventListener("click", () => {
+      document.getElementById("roomCodeInput").value = "";
+      document.getElementById("joinRoomModal").classList.remove("hidden");
+    });
+    document.getElementById("closeJoinModalBtn").addEventListener("click", () => {
+      document.getElementById("joinRoomModal").classList.add("hidden");
+    });
+    document.getElementById("cancelJoinBtn").addEventListener("click", () => {
+      document.getElementById("joinRoomModal").classList.add("hidden");
+    });
+    document.getElementById("confirmJoinBtn").addEventListener("click", async () => {
+      const val = document.getElementById("roomCodeInput").value.trim().toUpperCase();
+      if (/^[A-Z0-9_-]{3,16}$/.test(val)) {
+        document.getElementById("joinRoomModal").classList.add("hidden");
+        subscribeToRoom(val);
+        await pushProgressToCloud();
+        showToast(`Joined room ${val}`, "success");
+      } else {
+        showToast("Enter a valid 3–16 character room code", "error");
+      }
+    });
+
+    // Boot application
+    window.addEventListener("DOMContentLoaded", () => {
+      selectProblem(1, false);
+      initSmoothScrollAndAnimations();
+      initFirebaseSync();
+    });
+  </script>
+</body>
+</html>
